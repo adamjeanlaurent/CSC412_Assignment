@@ -6,22 +6,35 @@
 
 int main(int argc, char** argv)
 {
-    // char* filePath = "../../Data Sets/Data Set 1/";
     // if(argc < 3)
     // {
     //     printf("usage: %s numOfProcesses DataFolderPath OutputPath \n", argv[0]);
     //     return 0;
     // }
 
-    // Array2D* a = getFileList(filePath);
+    char* filePath = "../../Data Sets/Data Set 1/";
 
-    // int numOfFiles = a->rows;
+    Array2D* a = getFileList(filePath);
 
-    // freeArray2D(a);
+    int numOfFiles = a->rows;
+    int numOfProcesses = 3;
 
-    splitWork(50, 20);
-    splitWork(105, 20);
+    Array2D** workLists = splitWork(numOfFiles, numOfProcesses, a);
+
+    int i;
+    for(int i = 0; i < numOfProcesses; i++)
+    {
+        printf("Work List %d: \n");
+        printArray2D(workLists[i]);
+    }
 
 
+    for(int i = 0; i < numOfProcesses; i++)
+    {
+       freeArray2D(workLists[i]);
+    }
+
+
+    freeArray2D(a);
     return 0;
 }

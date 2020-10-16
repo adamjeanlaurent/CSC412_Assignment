@@ -4,10 +4,11 @@
 #include "fileSystemHandler.h"
 
 typedef struct Array3D {
-    int rows;
-    Array2D* contents;
-}Array3D;
+    int numOfLists;
+    Array2D** lists;
+} Array3D;
 
-void splitWork(int numOfFiles, int numOfProcess);
+int* getIndexRangesForProcesses(int numOfFiles, int numOfProcess);
+Array2D** splitWork(int numOfFiles, int numOfProcess, Array2D* fileList);
 
 #endif
