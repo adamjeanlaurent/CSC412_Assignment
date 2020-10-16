@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "processing.h"
 
 int* getIndexRangesForProcesses(int numOfFiles, int numOfProcess) 
@@ -56,23 +57,24 @@ Array2D** splitWork(int numOfFiles, int numOfProcess, Array2D* fileList)
     {
         workLists[i] = (Array2D*)malloc(sizeof(Array2D));
         // the num of files that the ith 2D Array should hold
-        int numOfFiles = processingIndexes[numOfProcess];
+        int numOfFiles = processingIndexes[i];
+        workLists[i]->rows = numOfFiles;
 
         // insert into worksLists[i] filenames numOfProcess[i], starting at soFar
 
         // dynamically allocating memory for current 2DArray->contents
-        workLists[i]->contents = (char**)malloc(sizeof(char*));
-        
+        workLists[i]->contents = (char**)calloc(numOfFiles ,sizeof(char*));
+
         // insert into contents
         // loop through num of file the ith 2D Array should hold
         for(j = 0; j < numOfFiles; j++)
         {
             // filename of file to add right now
-            char* fileToAdd = fileList->contents[soFar + j];
-
+            char* fileToAdd = fileList->contents[soFar];
             // dynamically allocate memory for jth row of workLists ith list
             // use size of filename + 1
-            workLists[i]->contents[j] = (char*)calloc(strlen(fileToAdd) + 1 ,sizeof(char));
+            workLists[i]->contents[j] = (char*)calloc(strlen(fileToAdd) + 1, sizeof(char));
+            workLists[i]->contents[j][strlen(fileToAdd)] = '\0';
 
             // append fileName into correct bucket
             sprintf(workLists[i]->contents[j], "%s", fileToAdd);
@@ -81,6 +83,7 @@ Array2D** splitWork(int numOfFiles, int numOfProcess, Array2D* fileList)
             soFar++;
         }
     }
+    
     free(processingIndexes);
     return workLists;
 }

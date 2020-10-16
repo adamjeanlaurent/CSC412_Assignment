@@ -12,9 +12,10 @@ int main(int argc, char** argv)
     //     return 0;
     // }
 
-    char* filePath = "../../Data Sets/Data Set 1/";
+    // char* filePath = "../../Data Sets/Data Set 1/";
+    char* f= "/Users/ajean-laurent/Dropbox/CSC_412_Work/Prog04/Data Sets/Data Set 1";
 
-    Array2D* a = getFileList(filePath);
+    Array2D* a = getFileList(f);
 
     int numOfFiles = a->rows;
     int numOfProcesses = 3;
@@ -22,18 +23,16 @@ int main(int argc, char** argv)
     Array2D** workLists = splitWork(numOfFiles, numOfProcesses, a);
 
     int i;
-    for(int i = 0; i < numOfProcesses; i++)
+    for(i = 0; i < numOfProcesses; i++)
     {
-        printf("Work List %d: \n");
+        printf("Work List %d: \n", i);
         printArray2D(workLists[i]);
     }
 
-
-    for(int i = 0; i < numOfProcesses; i++)
+    for(i = 0; i < numOfProcesses; i++)
     {
        freeArray2D(workLists[i]);
     }
-
 
     freeArray2D(a);
     return 0;

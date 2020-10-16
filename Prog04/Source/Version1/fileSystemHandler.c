@@ -81,10 +81,20 @@ void freeArray2D(Array2D* array2D)
 
     for(i = 0; i < array2D->rows; i++)
     {
-        free(array2D->contents[i]);
+        if(array2D->contents[i] != NULL)
+        {
+             free(array2D->contents[i]);
+        }
+       
     }
 
-    free(array2D->contents);
-
-    free(array2D);
+    if(array2D->contents != NULL)
+    {
+          free(array2D->contents);
+    }
+  
+    if(array2D != NULL)
+    {
+        free(array2D);
+    }
 }
