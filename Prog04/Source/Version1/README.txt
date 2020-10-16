@@ -4,8 +4,8 @@ arguments to main: numberOfProcesses, path to data directory
 
 Steps:
 
-1. Find out how many files there are in the file path
-2. Store all files names
+1. Find out how many files there are in the file path -- CHECK
+2. Store all files names -- CHECK
 3. "Assign" each function call a certain number of files to check
     - This can probably be done with a function call for each "processs", where the function call checks those indexes in array of filename
 4. While checking, the function will append the file name appropriate list of filenames
@@ -18,3 +18,4 @@ Steps:
 TODO:
 
 - handle paths ending in / and those that don't (can change this in file path)
+- correct number of files handled correctly

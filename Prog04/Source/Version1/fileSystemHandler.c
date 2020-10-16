@@ -65,12 +65,26 @@ char* concatFileNameAndPath(char* fileName, char* filePath, int lengthOfFileName
     return combinedPath;
 }
 
-void printArray2D(Array2D* a) 
+void printArray2D(Array2D* array2D) 
 {
     int i;
 
-    for(i = 0; i < a->rows; i++)
+    for(i = 0; i < array2D->rows; i++)
     {
-        puts(a->contents[i]);
+        puts(array2D->contents[i]);
     }
+}
+
+void freeArray2D(Array2D* array2D)
+{
+    int i;
+
+    for(i = 0; i < array2D->rows; i++)
+    {
+        free(array2D->contents[i]);
+    }
+
+    free(array2D->contents);
+
+    free(array2D);
 }

@@ -7,9 +7,8 @@ typedef struct Array2D {
 }Array2D;
 
 Array2D* getFileList(char* filePath);
-
 char* concatFileNameAndPath(char* fileName, char* filePath, int lengthOfFileName, int lengthOfFilePath);
-
-void printArray2D(Array2D* a);
+void printArray2D(Array2D* array2D);
+void freeArray2D(Array2D* array2D);
 
 #endif
