@@ -13,7 +13,7 @@ int main(int argc, char** argv)
     // }
 
     // char* filePath = "../../Data Sets/Data Set 1/";
-    char* f= "/Users/ajean-laurent/Dropbox/CSC_412_Work/Prog04/Data Sets/Data Set 1";
+    char* f = "/Users/ajean-laurent/Dropbox/CSC_412_Work/Prog04/Data Sets/Data Set 1";
 
     Array2D* a = getFileList(f);
 
@@ -34,6 +34,7 @@ int main(int argc, char** argv)
        freeArray2D(workLists[i]);
     }
 
+    free(workLists);
     freeArray2D(a);
     return 0;
 }

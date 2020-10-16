@@ -87,3 +87,36 @@ Array2D** splitWork(int numOfFiles, int numOfProcess, Array2D* fileList)
     free(processingIndexes);
     return workLists;
 }
+
+Array2D** distributeToDoLists(Array2D** workLists, int numOfProcess)
+{
+    Array2D** toDoLists = (Array2D**)calloc(numOfProcess, sizeof(Array2D*));
+    int i;
+    int j;
+
+    // for number of processes
+    for(i = 0; i < numOfProcess; i++)
+    {
+        // for num of files in that processes workList
+        for(j = 0; j < workLists[i]->rows; j++)
+        {
+            // read that file
+            // put it in it's corresponding toDo List
+            FILE *fp;
+
+            // get current filename
+            char* fileName = workLists[i]->contents[j];
+
+            // open file
+            fp = fopen(fileName, "r");
+
+            int index;
+
+            // get index number of file
+            fscanf(fp, "%d", index);
+            fclose(fp);
+
+            // now that we have the index, put it in the corresponding list
+        }
+    }
+}

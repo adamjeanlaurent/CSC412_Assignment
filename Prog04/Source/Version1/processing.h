@@ -10,5 +10,6 @@ typedef struct Array3D {
 
 int* getIndexRangesForProcesses(int numOfFiles, int numOfProcess);
 Array2D** splitWork(int numOfFiles, int numOfProcess, Array2D* fileList);
+Array2D** distributeToDoLists(Array2D** workLists, int numOfProcess);
 
 #endif
