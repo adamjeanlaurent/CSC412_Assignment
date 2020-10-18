@@ -19,7 +19,7 @@ Array2D* getFileList(char *filePath)
     int lengthOfFilePath = strlen(filePath);
 
     fileList->rows = 0;
-
+    
     DIR* dp;
     struct dirent* ep;
     dp = opendir(filePath);
@@ -50,7 +50,6 @@ Array2D* getFileList(char *filePath)
 
                 // free full path
                 free(combinedPath);
-
             }
         }
     }
@@ -87,7 +86,7 @@ void freeArray2D(Array2D* array2D)
         }
        
     }
-
+    
     if(array2D->contents != NULL)
     {
           free(array2D->contents);

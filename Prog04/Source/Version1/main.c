@@ -3,6 +3,7 @@
 #include <string.h>
 #include "fileSystemHandler.h"
 #include "processing.h"
+#include "distributor.h"
 
 int main(int argc, char** argv)
 {
@@ -13,25 +14,25 @@ int main(int argc, char** argv)
     // }
 
     // char* filePath = "../../Data Sets/Data Set 1/";
-    char* f = "/Users/ajean-laurent/Dropbox/CSC_412_Work/Prog04/Data Sets/Data Set 1";
+    char* f = "../../Data Sets/Data Set 1/";
+    char* tempDir = "./temp/";
+    int numOfProcesses = 2;
+    int i;
 
     Array2D* a = getFileList(f);
 
     int numOfFiles = a->rows;
-    int numOfProcesses = 3;
-
+    
     Array2D** workLists = splitWork(numOfFiles, numOfProcesses, a);
 
-    int i;
     for(i = 0; i < numOfProcesses; i++)
     {
-        printf("Work List %d: \n", i);
-        printArray2D(workLists[i]);
+        distribute(workLists[i], i, tempDir);
     }
 
     for(i = 0; i < numOfProcesses; i++)
     {
-       freeArray2D(workLists[i]);
+        freeArray2D(workLists[i]);
     }
 
     free(workLists);

@@ -8,7 +8,7 @@ int* getIndexRangesForProcesses(int numOfFiles, int numOfProcess)
     int* processIndexes = (int*)calloc(numOfProcess, sizeof(int)); 
 
     int i;
-
+    
     if(numOfFiles % numOfProcess == 0)
     {
         for(i = 0; i < numOfProcess; i++)
@@ -91,9 +91,10 @@ Array2D** splitWork(int numOfFiles, int numOfProcess, Array2D* fileList)
 Array2D** distributeToDoLists(Array2D** workLists, int numOfProcess)
 {
     Array2D** toDoLists = (Array2D**)calloc(numOfProcess, sizeof(Array2D*));
+
     int i;
     int j;
-
+    
     // for number of processes
     for(i = 0; i < numOfProcess; i++)
     {
@@ -103,20 +104,59 @@ Array2D** distributeToDoLists(Array2D** workLists, int numOfProcess)
             // read that file
             // put it in it's corresponding toDo List
             FILE *fp;
-
+            
             // get current filename
             char* fileName = workLists[i]->contents[j];
 
             // open file
             fp = fopen(fileName, "r");
 
+            if(fp == NULL)
+            {
+                exit(1);
+            }
             int index;
 
             // get index number of file
-            fscanf(fp, "%d", index);
+            fscanf(fp, "%d", &index);
             fclose(fp);
 
             // now that we have the index, put it in the corresponding list
+
+            // if we haven't allocated anything for this list yet
+            // allocate it
+            if(toDoLists[index] == NULL)
+            {
+                // allocate Array2D pointer 
+                toDoLists[index] = (Array2D*)malloc(sizeof(Array2D));
+
+                // allocate memeory for char** contents pointers
+                toDoLists[index]->contents = (char**)calloc(1 ,sizeof(char*));
+
+                toDoLists[index]->contents[0] = (char*)calloc(strlen(fileName) + 1, sizeof(char));
+
+                toDoLists[index]->contents[0][strlen(fileName)] = '\0';
+
+                toDoLists[index]->rows = 1;
+
+                // append fileName into correct bucket
+                sprintf(toDoLists[index]->contents[0], "%s", fileName);
+            }
+
+            // if that to do list already exists
+            // realloc contents pointer
+            // allocate contents[ row + 1]
+            else 
+            {   
+                int row = toDoLists[index]->rows;
+                toDoLists[index]->contents = (char**)realloc(toDoLists[index]->contents ,sizeof(char*) * (row + 1));
+                toDoLists[index]->contents[row] = (char*)calloc(strlen(fileName) + 1, sizeof(char));
+                toDoLists[index]->contents[row][strlen(fileName)] = '\0';
+                sprintf(toDoLists[index]->contents[row], "%s", fileName);
+                toDoLists[index]->rows++;
+            }
         }
     }
+    return toDoLists;
 }
+
