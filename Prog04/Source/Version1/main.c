@@ -22,12 +22,30 @@ int main(int argc, char** argv)
     Array2D* a = getFileList(f);
 
     int numOfFiles = a->rows;
-    
+
     Array2D** workLists = splitWork(numOfFiles, numOfProcesses, a);
 
+    // distribute work among proccesses
     for(i = 0; i < numOfProcesses; i++)
     {
         distribute(workLists[i], i, tempDir);
+    }
+    
+    // process 
+    for(i = 0; i < numOfProcesses; i++)
+    {
+        char* toDoListFilePath = generateToDoListFileName(tempDir, i);
+        process(toDoListFilePath);
+        // FILE* fp = fopen(toDoListFilePath, "r");
+        // if(fp != NULL)
+        // {
+        //     int i;
+        //     int y;
+        //     fscanf(fp, "%d %d", &i, &y);
+        //     printf("i:%d \t y:%d \n", i, y);
+        //     fclose(fp);
+        // }
+        free(toDoListFilePath);
     }
 
     for(i = 0; i < numOfProcesses; i++)

@@ -14,17 +14,22 @@ void distribute(Array2D* workList, int currentProcess, char* tempDir)
         int index;
 
         fp = fopen(filePath, "r");
-
+    
         if(fp != NULL)
         {
             // get index number of file
             fscanf(fp, "%d", &index);
             fclose(fp);
-
-            char* toDoListFilePath = generateToDoListFileName(tempDir, currentProcess);
-
+            
+            char* toDoListFilePath = generateToDoListFileName(tempDir, index); 
+            
             fp = fopen(toDoListFilePath, "a");
-            fprintf(fp, "%s\n", filePath);
+
+            if(fp != NULL)
+            {
+                fprintf(fp, "%s\n", filePath);
+                fclose(fp);
+            }
 
             free(toDoListFilePath);
         }

@@ -3,6 +3,13 @@
 #include <string.h>
 #include "processing.h"
 
+typedef struct Fragment
+{
+    int index;
+    int lineNumber;
+    char* line;
+} Fragment;
+
 int* getIndexRangesForProcesses(int numOfFiles, int numOfProcess) 
 {
     int* processIndexes = (int*)calloc(numOfProcess, sizeof(int)); 
@@ -160,3 +167,61 @@ Array2D** distributeToDoLists(Array2D** workLists, int numOfProcess)
     return toDoLists;
 }
 
+void process(char* toDoListFilePath)
+{
+    Fragment** fragments = (Fragment**)calloc(20, sizeof(Fragment*));
+    int numOfFragments = 20;
+    int i = 0;
+    FILE* toDoListFP;
+    FILE* fileToProcessFP;
+
+    toDoListFP = fopen(toDoListFilePath, "r");
+
+    // read to do list
+    if(toDoListFP != NULL)
+    {
+        char* filePathBuffer = (char*)calloc(1000 ,sizeof(char));
+        while(fscanf(toDoListFP, "%s ", filePathBuffer) == 2)
+        {
+            fileToProcessFP = fopen(filePathBuffer, "r");
+
+            if(fileToProcessFP != NULL)
+            {
+                int index;
+                int lineNumber; 
+                char* lineBuffer = (char*)calloc(1000 ,sizeof(char));
+                // while reading from file
+                while(fscanf(fileToProcessFP, "%d %d %s", &index, &lineNumber, lineBuffer) == 2)
+                {
+                    // if fragment array is full
+                    // realloc double the space
+                    if(i == numOfFragments)
+                    {
+                        numOfFragments = numOfFragments * 2;
+                        fragments = (Fragment**)realloc(fragments, numOfFragments * sizeof(Fragment*));
+                    }
+                    
+                    // add fragment to fragment array so it can be sorted
+                    fragments[i] = (Fragment*)malloc(sizeof(Fragment));
+                    fragments[i] ->index = index;
+                    fragments[i] ->lineNumber = lineNumber;
+            
+                    // copy buffer into line string
+                    int len = strlen(lineBuffer);
+                    fragments[i]->line = (char*)calloc(len, sizeof(char));
+                    sprintf(fragments[i]->line, "%s", lineBuffer);
+                    i++;
+                    puts(fragments[i]->line);
+                    // special case for space ?
+                    // what does buffer looking like if white space
+                    // is empty? does it crash ?
+                }
+                free(lineBuffer);
+            }
+             fclose(fileToProcessFP);
+            free(filePathBuffer);
+        }
+        fclose(toDoListFP);
+        free(filePathBuffer);
+    }
+}
