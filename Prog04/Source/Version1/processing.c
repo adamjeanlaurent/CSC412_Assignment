@@ -98,3 +98,39 @@ void printListOfLines(ListOfLines* list, int numOfLists)
         printf("*********************************\n");
     }
 }
+
+char* process(ListOfLines* listOfLines)
+{
+    // sort elements
+    int numLines = listOfLines->length;
+    qsort(listOfLines->lines, numLines, sizeof(Line), sortingByAscendingFunction);
+
+    // get length needed
+    int lengthOfLongString = 1 + (numLines * 2); // init with one for \0 , num lines for \n for each line 
+    int i;
+
+    for(i = 0; i < numLines; i++)
+    {
+        lengthOfLongString += strlen(listOfLines->lines[i].contents);
+    }
+
+    // allocate string to hold long string
+    char* longString = (char*)calloc(lengthOfLongString, sizeof(char));
+
+    // append to longString
+    for(i = 0; i < numLines; i++)
+    {
+        strcat(longString, "\n");
+        strcat(longString, listOfLines->lines[i].contents);
+    }
+    
+    return longString;
+}
+
+int sortingByAscendingFunction(const void* a, const void* b)
+{
+    const Line* l1 = (Line*)a;
+    const Line* l2 = (Line*)b;
+
+    return(l1->lineNum - l2->lineNum);
+}

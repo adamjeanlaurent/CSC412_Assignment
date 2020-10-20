@@ -13,7 +13,7 @@ int main(int argc, char** argv)
     //     printf("usage: %s numOfProcesses DataFolderPath OutputPath \n", argv[0]);
     //     return 0;
     // }
-
+    
     char* f = "../../Data-Sets/Data-Set-1/";
     char* tempDir = "./temp/";
     int numOfProcesses = 2;
@@ -29,9 +29,11 @@ int main(int argc, char** argv)
     {
         distribute(workLists[i], i, tempDir);
     }
-
+    
     ListOfLines* l = collectResultsFromDistribution(numOfProcesses, tempDir);
-    printListOfLines(l, numOfProcesses);
+    
+    process(&l[1]);
+    // printListOfLines(l, numOfProcesses);
     
     for(i = 0; i < numOfProcesses; i++)
     {

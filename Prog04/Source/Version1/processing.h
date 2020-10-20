@@ -17,5 +17,8 @@ typedef struct ListOfLines
 } ListOfLines;
 
 ListOfLines* collectResultsFromDistribution(int numOfProcess, char* tempDir);
-void printListOfLines(ListOfLines* list, int numOfLists);
+void printListOfLines(ListOfLines* listsOfLines, int numOfLists);
+char* process(ListOfLines* listOfLines);
+int sortingByAscendingFunction(const void* a, const void* b);
+
 #endif
