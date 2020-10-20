@@ -16,8 +16,6 @@ typedef struct ListOfLines
     Line* lines;
 } ListOfLines;
 
-int* getIndexRangesForProcesses(int numOfFiles, int numOfProcess);
-Array2D** splitWork(int numOfFiles, int numOfProcess, Array2D* fileList);
 ListOfLines* collectResultsFromDistribution(int numOfProcess, char* tempDir);
 void printListOfLines(ListOfLines* list, int numOfLists);
 #endif

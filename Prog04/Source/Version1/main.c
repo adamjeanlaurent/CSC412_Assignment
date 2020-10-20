@@ -4,6 +4,7 @@
 #include "fileSystemHandler.h"
 #include "processing.h"
 #include "distributor.h"
+#include "splitWork.h"
 
 int main(int argc, char** argv)
 {
@@ -13,7 +14,6 @@ int main(int argc, char** argv)
     //     return 0;
     // }
 
-    // char* filePath = "../../Data Sets/Data Set 1/";
     char* f = "../../Data-Sets/Data-Set-1/";
     char* tempDir = "./temp/";
     int numOfProcesses = 2;
@@ -25,7 +25,6 @@ int main(int argc, char** argv)
 
     Array2D** workLists = splitWork(numOfFiles, numOfProcesses, a);
 
-    // distribute work among proccesses
     for(i = 0; i < numOfProcesses; i++)
     {
         distribute(workLists[i], i, tempDir);

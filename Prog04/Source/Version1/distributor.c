@@ -34,16 +34,6 @@ void distribute(Array2D* workList, int currentProcess, char* tempDir)
     
             free(toDoListFilePath);
         }
-
-        // write to corresponding toDoListFile
-        // assuming dir already exists
-        // and that bash script will delete it later
-
-        // fp = fopen(tempDir, "a");
-        
-        // // output file name to file
-        // fprintf(fp, "%s\n", );
-        
     }
 }
 

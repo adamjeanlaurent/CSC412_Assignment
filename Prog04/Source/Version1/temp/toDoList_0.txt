@@ -1,5 +1,0 @@
-../../Data-Sets/Data-Set-1/g3.txt
-../../Data-Sets/Data-Set-1/f3.txt
-../../Data-Sets/Data-Set-1/f162.txt
-../../Data-Sets/Data-Set-1/g13.txt
-../../Data-Sets/Data-Set-1/h35.txt
