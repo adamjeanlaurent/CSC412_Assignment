@@ -14,7 +14,7 @@ int main(int argc, char** argv)
     // }
 
     // char* filePath = "../../Data Sets/Data Set 1/";
-    char* f = "../../Data Sets/Data Set 1/";
+    char* f = "../../Data-Sets/Data-Set-1/";
     char* tempDir = "./temp/";
     int numOfProcesses = 2;
     int i;
@@ -30,29 +30,15 @@ int main(int argc, char** argv)
     {
         distribute(workLists[i], i, tempDir);
     }
-    
-    // process 
-    for(i = 0; i < numOfProcesses; i++)
-    {
-        char* toDoListFilePath = generateToDoListFileName(tempDir, i);
-        process(toDoListFilePath);
-        // FILE* fp = fopen(toDoListFilePath, "r");
-        // if(fp != NULL)
-        // {
-        //     int i;
-        //     int y;
-        //     fscanf(fp, "%d %d", &i, &y);
-        //     printf("i:%d \t y:%d \n", i, y);
-        //     fclose(fp);
-        // }
-        free(toDoListFilePath);
-    }
 
+    ListOfLines* l = collectResultsFromDistribution(numOfProcesses, tempDir);
+    printListOfLines(l, numOfProcesses);
+    
     for(i = 0; i < numOfProcesses; i++)
     {
         freeArray2D(workLists[i]);
     }
-
+    
     free(workLists);
     freeArray2D(a);
     return 0;

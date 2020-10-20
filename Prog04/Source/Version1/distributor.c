@@ -17,7 +17,8 @@ void distribute(Array2D* workList, int currentProcess, char* tempDir)
     
         if(fp != NULL)
         {
-            // get index number of file
+
+            // get index number, line number, and line of file
             fscanf(fp, "%d", &index);
             fclose(fp);
             
@@ -30,7 +31,7 @@ void distribute(Array2D* workList, int currentProcess, char* tempDir)
                 fprintf(fp, "%s\n", filePath);
                 fclose(fp);
             }
-
+    
             free(toDoListFilePath);
         }
 
@@ -51,9 +52,9 @@ char* generateToDoListFileName(char* tempDir, int processNum)
     int lengthOfProcessNum = fastLengthOfNumber(processNum);
     char* toDoListFileName = "toDoList_";
 
-    int len = strlen(tempDir) + lengthOfProcessNum + strlen(toDoListFileName) + 1;
+    int len = strlen(tempDir) + lengthOfProcessNum + strlen(toDoListFileName) + 5;
     char* toDoListFilePath = (char*)calloc(len, sizeof(char));
-    sprintf(toDoListFilePath, "%s%s%d", tempDir, toDoListFileName, processNum);
+    sprintf(toDoListFilePath, "%s%s%d.txt", tempDir, toDoListFileName, processNum);
     
     return toDoListFilePath;
 }

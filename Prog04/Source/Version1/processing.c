@@ -2,13 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "processing.h"
-
-typedef struct Fragment
-{
-    int index;
-    int lineNumber;
-    char* line;
-} Fragment;
+#include "distributor.h"
 
 int* getIndexRangesForProcesses(int numOfFiles, int numOfProcess) 
 {
@@ -58,7 +52,7 @@ Array2D** splitWork(int numOfFiles, int numOfProcess, Array2D* fileList)
      
     // loop through p indexes
     // insert into i-th list, files in range(upto + i)
-
+    
     // loop through num of processes we have
     for(i = 0; i < numOfProcess; i++)
     {
@@ -95,133 +89,97 @@ Array2D** splitWork(int numOfFiles, int numOfProcess, Array2D* fileList)
     return workLists;
 }
 
-Array2D** distributeToDoLists(Array2D** workLists, int numOfProcess)
+ListOfLines* collectResultsFromDistribution(int numOfProcess, char* tempDir)
 {
-    Array2D** toDoLists = (Array2D**)calloc(numOfProcess, sizeof(Array2D*));
-
+    // create n list of lines (what we are going to return)
+    ListOfLines* listOfLines = (ListOfLines*)malloc(sizeof(ListOfLines) * numOfProcess);
     int i;
-    int j;
-    
-    // for number of processes
+
+    // init ListOfLines
     for(i = 0; i < numOfProcess; i++)
     {
-        // for num of files in that processes workList
-        for(j = 0; j < workLists[i]->rows; j++)
-        {
-            // read that file
-            // put it in it's corresponding toDo List
-            FILE *fp;
-            
-            // get current filename
-            char* fileName = workLists[i]->contents[j];
-
-            // open file
-            fp = fopen(fileName, "r");
-
-            if(fp == NULL)
-            {
-                exit(1);
-            }
-            int index;
-
-            // get index number of file
-            fscanf(fp, "%d", &index);
-            fclose(fp);
-
-            // now that we have the index, put it in the corresponding list
-
-            // if we haven't allocated anything for this list yet
-            // allocate it
-            if(toDoLists[index] == NULL)
-            {
-                // allocate Array2D pointer 
-                toDoLists[index] = (Array2D*)malloc(sizeof(Array2D));
-
-                // allocate memeory for char** contents pointers
-                toDoLists[index]->contents = (char**)calloc(1 ,sizeof(char*));
-
-                toDoLists[index]->contents[0] = (char*)calloc(strlen(fileName) + 1, sizeof(char));
-
-                toDoLists[index]->contents[0][strlen(fileName)] = '\0';
-
-                toDoLists[index]->rows = 1;
-
-                // append fileName into correct bucket
-                sprintf(toDoLists[index]->contents[0], "%s", fileName);
-            }
-
-            // if that to do list already exists
-            // realloc contents pointer
-            // allocate contents[ row + 1]
-            else 
-            {   
-                int row = toDoLists[index]->rows;
-                toDoLists[index]->contents = (char**)realloc(toDoLists[index]->contents ,sizeof(char*) * (row + 1));
-                toDoLists[index]->contents[row] = (char*)calloc(strlen(fileName) + 1, sizeof(char));
-                toDoLists[index]->contents[row][strlen(fileName)] = '\0';
-                sprintf(toDoLists[index]->contents[row], "%s", fileName);
-                toDoLists[index]->rows++;
-            }
-        }
+        listOfLines[i].length = 0;
+        listOfLines[i].lines = (Line*)malloc(sizeof(Line)); // init each list of lines with 1 line
+        listOfLines[i].lines[0].index = 0;
+        listOfLines[i].lines[0].lineNum = 0;
+        listOfLines[i].lines[0].contents = NULL;
     }
-    return toDoLists;
+
+    for(i = 0; i < numOfProcess; i++)
+    {
+        // get to do list file name
+        char* toDoListFilePath = generateToDoListFileName(tempDir, i);
+
+        // open to do list
+        FILE* toDoListFP = fopen(toDoListFilePath ,"r");
+
+        // if file exists
+        if(toDoListFP != NULL)
+        {
+            // read each line in toDoList
+            char fragmentFilePath[500];
+            while(fscanf(toDoListFP, "%s", fragmentFilePath) == 1)
+            {
+                // open fragment and store results
+                FILE* fragmentFP = fopen(fragmentFilePath, "r");
+                // if fragment exists
+                if(fragmentFP != NULL)
+                {
+                    // read one line from file
+                    int index;
+                    int lineNum;
+                    char lineBuffer[500];
+
+                    fscanf(fragmentFP, "%d %d", &index, &lineNum);
+                    fgets(lineBuffer, 500, fragmentFP);
+
+                    // store in object
+                    int n = listOfLines[i].length; // i = current list we are looking at
+                    listOfLines[i].lines[n].index = index;
+                    listOfLines[i].lines[n].lineNum = lineNum;
+                    listOfLines[i].lines[n].contents = (char*)calloc(strlen(lineBuffer) + 1, sizeof(char));
+                    sprintf(listOfLines[i].lines[n].contents, "%s", lineBuffer);
+                    listOfLines[i].length++;
+
+                    // realloc 1 more space
+                    listOfLines[i].lines = (Line*)realloc(listOfLines[i].lines, listOfLines[i].length + 1);
+
+                    fclose(fragmentFP);
+                }
+            }
+            fclose(toDoListFP);
+        }
+        free(toDoListFilePath);
+    }
+    return listOfLines;
 }
 
-void process(char* toDoListFilePath)
+void printListOfLines(ListOfLines* list, int numOfLists)
 {
-    Fragment** fragments = (Fragment**)calloc(20, sizeof(Fragment*));
-    int numOfFragments = 20;
-    int i = 0;
-    FILE* toDoListFP;
-    FILE* fileToProcessFP;
+    int i;
+    int j;
 
-    toDoListFP = fopen(toDoListFilePath, "r");
-
-    // read to do list
-    if(toDoListFP != NULL)
+    // for all list of lines
+    for(i = 0; i < numOfLists; i++)
     {
-        char* filePathBuffer = (char*)calloc(1000 ,sizeof(char));
-        while(fscanf(toDoListFP, "%s ", filePathBuffer) == 2)
-        {
-            fileToProcessFP = fopen(filePathBuffer, "r");
+        // print all line in list of lines
+        printf("List Of Lines %d: \n", i);
+        printf("len %d: \n", list[i].length);
+        printf("*********************************\n");
 
-            if(fileToProcessFP != NULL)
-            {
-                int index;
-                int lineNumber; 
-                char* lineBuffer = (char*)calloc(1000 ,sizeof(char));
-                // while reading from file
-                while(fscanf(fileToProcessFP, "%d %d %s", &index, &lineNumber, lineBuffer) == 2)
-                {
-                    // if fragment array is full
-                    // realloc double the space
-                    if(i == numOfFragments)
-                    {
-                        numOfFragments = numOfFragments * 2;
-                        fragments = (Fragment**)realloc(fragments, numOfFragments * sizeof(Fragment*));
-                    }
-                    
-                    // add fragment to fragment array so it can be sorted
-                    fragments[i] = (Fragment*)malloc(sizeof(Fragment));
-                    fragments[i] ->index = index;
-                    fragments[i] ->lineNumber = lineNumber;
-            
-                    // copy buffer into line string
-                    int len = strlen(lineBuffer);
-                    fragments[i]->line = (char*)calloc(len, sizeof(char));
-                    sprintf(fragments[i]->line, "%s", lineBuffer);
-                    i++;
-                    puts(fragments[i]->line);
-                    // special case for space ?
-                    // what does buffer looking like if white space
-                    // is empty? does it crash ?
-                }
-                free(lineBuffer);
-            }
-             fclose(fileToProcessFP);
-            free(filePathBuffer);
+        // print all line in list
+        for(j = 0; j < list[i].length; j++)
+        {
+            int index = list[i].lines[j].index;
+            int lineNum = list[i].lines[j].lineNum;
+            char* contents = list[i].lines[j].contents;
+
+            printf("Line %d: \n", j);
+            printf("index: %d \n", index);
+            printf("line number: %d \n", lineNum);
+            printf("contents: %s \n", contents);
+            printf("--------------------\n");
         }
-        fclose(toDoListFP);
-        free(filePathBuffer);
+        printf("*********************************\n");
     }
 }
