@@ -13,12 +13,14 @@ int main(int argc, char** argv)
         printf("usage: %s numOfProcesses DataFolderPath OutputPath \n", argv[0]);
         return 0;
     }
-        
-    int numOfProcesses = atoi(argv[1]);
+    
+    int numOfProcesses = atoi(argv[1]) + 1;
     char* dataSetFilePath = argv[2];
     char* outputFilePath = argv[3];
-    char* tempDir = "./temp/";
-    
+    char* tempDir = "../Source/Version1/temp/";
+
+    printf("num of process: %d \n data set: %s \n output Dir: %s \n", numOfProcesses, dataSetFilePath, outputFilePath);
+
     int i;
 
     Array2D* a = getFileList(dataSetFilePath);

@@ -17,12 +17,13 @@ void distribute(Array2D* workList, int currentProcess, char* tempDir)
     
         if(fp != NULL)
         {
-
+            
             // get index number, line number, and line of file
             fscanf(fp, "%d", &index);
             fclose(fp);
             
             char* toDoListFilePath = generateToDoListFileName(tempDir, index); 
+          
             
             fp = fopen(toDoListFilePath, "a");
 

@@ -12,15 +12,10 @@ mkdir "${TEMP_DIR}"
 
 # get last char of param directories
 LAST_CHAR_OF_PATH_TO_DATA_FILES="${PATH_TO_DATA_FILES: -1}"
-LAST_CHAR_OF_OUTPUT_FILE_PATH="${OUTPUT_FILE_PATH: -1}"
 
 # if last character of path is not a / , append / to the path
 if [ "$LAST_CHAR_OF_PATH_TO_DATA_FILES" != "/" ] ; then
     PATH_TO_DATA_FILES="${PATH_TO_DATA_FILES}/"
-fi
-
-if [ "$LAST_CHAR_OF_OUTPUT_FILE_PATH" != "/" ] ; then
-    OUTPUT_FILE_PATH="${OUTPUT_FILE_PATH}/"
 fi
 
 GREATEST_INDEX=0
@@ -44,4 +39,4 @@ sh ./build.sh
 ../Source/Version1/v1 $GREATEST_INDEX $PATH_TO_DATA_FILES $OUTPUT_FILE_PATH
 
 # delete temp dir
-rm -r $TEMP_DIR
+# rm -r $TEMP_DIR
