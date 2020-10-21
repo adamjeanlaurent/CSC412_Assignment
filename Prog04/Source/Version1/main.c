@@ -31,9 +31,22 @@ int main(int argc, char** argv)
     }
     
     ListOfLines* l = collectResultsFromDistribution(numOfProcesses, tempDir);
-    
-    process(&l[1]);
     // printListOfLines(l, numOfProcesses);
+
+
+    char* reconstructedSourceFile = (char*)calloc(1, sizeof(char));
+    reconstructedSourceFile[0] = '\0';
+
+    for(i = 0; i < numOfProcesses; i++)
+    {
+        char* partialOfReconstructedSourceFile = process(&l[i]);
+        int len = strlen(partialOfReconstructedSourceFile) + strlen(reconstructedSourceFile) + 1;
+        reconstructedSourceFile = (char*)realloc(reconstructedSourceFile, sizeof(char) * len);
+        strcat(reconstructedSourceFile, partialOfReconstructedSourceFile);
+        free(partialOfReconstructedSourceFile);
+    }
+      puts(reconstructedSourceFile);
+   
     
     for(i = 0; i < numOfProcesses; i++)
     {

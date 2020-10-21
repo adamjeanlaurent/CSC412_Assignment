@@ -33,7 +33,7 @@ ListOfLines* collectResultsFromDistribution(int numOfProcess, char* tempDir)
         {
             // read each line in toDoList
             char fragmentFilePath[500];
-            while(fscanf(toDoListFP, "%s", fragmentFilePath) == 1)
+            while(fscanf(toDoListFP, "%s ", fragmentFilePath) == 1)
             {
                 // open fragment and store results
                 FILE* fragmentFP = fopen(fragmentFilePath, "r");
@@ -53,18 +53,23 @@ ListOfLines* collectResultsFromDistribution(int numOfProcess, char* tempDir)
                     listOfLines[i].lines[n].index = index;
                     listOfLines[i].lines[n].lineNum = lineNum;
                     listOfLines[i].lines[n].contents = (char*)calloc(strlen(lineBuffer) + 1, sizeof(char));
-                    sprintf(listOfLines[i].lines[n].contents, "%s", lineBuffer);
+                    // sprintf(listOfLines[i].lines[n].contents, "%s", lineBuffer);
+                    lineBuffer[strcspn(lineBuffer, "\n")] = 0;
+                    strcpy(listOfLines[i].lines[n].contents, lineBuffer);
+                    // puts(listOfLines[i].lines[n].contents);
+                    listOfLines[i].lines[n].contents[strlen(listOfLines[i].lines[n].contents)] = '\0';
+                    
                     listOfLines[i].length++;
 
                     // realloc 1 more space
-                    listOfLines[i].lines = (Line*)realloc(listOfLines[i].lines, listOfLines[i].length + 1);
-
+                    listOfLines[i].lines = (Line*)realloc(listOfLines[i].lines, (listOfLines[i].length + 1) * sizeof(Line));
+                    //printf("i: %d n: %d \n %s\n",i,n,listOfLines[i].lines[n].contents);
                     fclose(fragmentFP);
                 }
             }
             fclose(toDoListFP);
         }
-        free(toDoListFilePath);
+         free(toDoListFilePath);
     }
     return listOfLines;
 }
@@ -73,7 +78,7 @@ void printListOfLines(ListOfLines* list, int numOfLists)
 {
     int i;
     int j;
-
+     printf("number Of lists %d: \n", numOfLists);
     // for all list of lines
     for(i = 0; i < numOfLists; i++)
     {
@@ -89,10 +94,11 @@ void printListOfLines(ListOfLines* list, int numOfLists)
             int lineNum = list[i].lines[j].lineNum;
             char* contents = list[i].lines[j].contents;
 
+
             printf("Line %d: \n", j);
             printf("index: %d \n", index);
             printf("line number: %d \n", lineNum);
-            printf("contents: %s \n", contents);
+            printf("contents: %s\n", contents);
             printf("--------------------\n");
         }
         printf("*********************************\n");
@@ -123,7 +129,6 @@ char* process(ListOfLines* listOfLines)
         strcat(longString, "\n");
         strcat(longString, listOfLines->lines[i].contents);
     }
-    
     return longString;
 }
 
