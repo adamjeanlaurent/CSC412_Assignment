@@ -16,6 +16,7 @@ int main(int argc, char** argv)
     
     char* f = "../../Data-Sets/Data-Set-1/";
     char* tempDir = "./temp/";
+    char* outputDir = "./output.c";
     int numOfProcesses = 2;
     int i;
 
@@ -45,8 +46,8 @@ int main(int argc, char** argv)
         strcat(reconstructedSourceFile, partialOfReconstructedSourceFile);
         free(partialOfReconstructedSourceFile);
     }
-      puts(reconstructedSourceFile);
-   
+    
+    writeReconstructedFileToOutputDir(reconstructedSourceFile, outputDir);
     
     for(i = 0; i < numOfProcesses; i++)
     {

@@ -97,3 +97,14 @@ void freeArray2D(Array2D* array2D)
         free(array2D);
     }
 }
+
+void writeReconstructedFileToOutputDir(char* reconstructedFile, char* outputPath)
+{
+    FILE* fp = fopen(outputPath ,"a");
+    
+    if(fp != NULL)
+    {
+         fputs(reconstructedFile, fp);
+         fclose(fp);
+    }
+}
