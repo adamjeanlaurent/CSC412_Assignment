@@ -8,19 +8,20 @@
 
 int main(int argc, char** argv)
 {
-    // if(argc < 3)
-    // {
-    //     printf("usage: %s numOfProcesses DataFolderPath OutputPath \n", argv[0]);
-    //     return 0;
-    // }
-    
-    char* f = "../../Data-Sets/Data-Set-1/";
+    if(argc != 4)
+    {
+        printf("usage: %s numOfProcesses DataFolderPath OutputPath \n", argv[0]);
+        return 0;
+    }
+        
+    int numOfProcesses = atoi(argv[1]);
+    char* dataSetFilePath = argv[2];
+    char* outputFilePath = argv[3];
     char* tempDir = "./temp/";
-    char* outputDir = "./output.c";
-    int numOfProcesses = 2;
+    
     int i;
 
-    Array2D* a = getFileList(f);
+    Array2D* a = getFileList(dataSetFilePath);
 
     int numOfFiles = a->rows;
 
@@ -32,8 +33,6 @@ int main(int argc, char** argv)
     }
     
     ListOfLines* l = collectResultsFromDistribution(numOfProcesses, tempDir);
-    // printListOfLines(l, numOfProcesses);
-
 
     char* reconstructedSourceFile = (char*)calloc(1, sizeof(char));
     reconstructedSourceFile[0] = '\0';
@@ -47,7 +46,7 @@ int main(int argc, char** argv)
         free(partialOfReconstructedSourceFile);
     }
     
-    writeReconstructedFileToOutputDir(reconstructedSourceFile, outputDir);
+    writeReconstructedFileToOutputDir(reconstructedSourceFile, outputFilePath);
     
     for(i = 0; i < numOfProcesses; i++)
     {
