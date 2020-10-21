@@ -19,8 +19,6 @@ int main(int argc, char** argv)
     char* outputFilePath = argv[3];
     char* tempDir = "../Source/Version1/temp/";
 
-    printf("num of process: %d \n data set: %s \n output Dir: %s \n", numOfProcesses, dataSetFilePath, outputFilePath);
-
     int i;
 
     Array2D* a = getFileList(dataSetFilePath);

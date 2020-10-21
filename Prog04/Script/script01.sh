@@ -21,7 +21,7 @@ fi
 GREATEST_INDEX=0
 
 # loop through .txt files in path to data files
-for FILE in "$PATH_TO_DATA_FILES"*.txt ; do
+for FILE in "$PATH_TO_DATA_FILES"*.text ; do
 
     # get index of file
     FILE_INDEX=$(grep -o '^[0-9]*' $FILE)
@@ -35,8 +35,11 @@ done
 # build all execs
 sh ./build.sh
 
-# run version 1
+# # run version 1
 ../Source/Version1/v1 $GREATEST_INDEX $PATH_TO_DATA_FILES $OUTPUT_FILE_PATH
 
-# delete temp dir
-# rm -r $TEMP_DIR
+# # delete temp dir
+rm -r $TEMP_DIR
+
+
+# test ./script01.sh /Users/ajean-laurent/Desktop/CSC_412_Work/Prog04/Data-Sets/Large-Data-Sets/DataSet-1--2-procs/ /Users/ajean-laurent/Desktop/CSC_412_Work/Prog04/Source/Version1/outputfile.c
