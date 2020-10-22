@@ -105,7 +105,7 @@ void printListOfLines(ListOfLines* list, int numOfLists)
     }
 }
 
-char* process(ListOfLines* listOfLines)
+char* processV1(ListOfLines* listOfLines)
 {
     // sort elements
     int numLines = listOfLines->length;
@@ -132,10 +132,52 @@ char* process(ListOfLines* listOfLines)
     return longString;
 }
 
+void processV2(ListOfLines* ListOfLines, char* tempDir, int processNum)
+{   
+    int i;
+    // sort elements 
+    int numOfLines = ListOfLines->length;
+    qsort(printListOfLines, numOfLines, sizeof(Line), sortingByAscendingFunction);
+
+    // write to output file
+
+    // create output file for fragment
+    char* fragmentFilePath = generateSourceFragmentFileName(tempDir, processNum);
+
+    FILE* fp = fopen(fragmentFilePath, "a");
+    
+    if(fp != NULL)
+    {
+        // write number of lines to file
+        fprintf(fp, "%d\n", numOfLines);
+
+        // in loop write to file
+        for(i = 0; i < numOfLines; i++)
+        {
+            fprintf(fp, "%s\n", ListOfLines->lines[i].contents);
+        }
+
+        fclose(fp);
+    }
+    free(fragmentFilePath);
+}
+
 int sortingByAscendingFunction(const void* a, const void* b)
 {
     const Line* l1 = (Line*)a;
     const Line* l2 = (Line*)b;
 
     return(l1->lineNum - l2->lineNum);
+}
+
+char* generateSourceFragmentFileName(char* tempDir, int processNum)
+{
+    int lengthOfProcessNum = fastLengthOfNumber(processNum);
+    char* fragmentFileName = "Fragment_";
+
+    int len = strlen(tempDir) + lengthOfProcessNum + strlen(fragmentFileName) + 5;
+    char* fragmentFilePath = (char*)calloc(len, sizeof(char));
+    sprintf(fragmentFilePath, "%s%s%d.txt", tempDir, fragmentFileName, processNum);
+    
+    return fragmentFilePath;
 }

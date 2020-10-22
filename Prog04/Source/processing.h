@@ -18,7 +18,9 @@ typedef struct ListOfLines
 
 ListOfLines* collectResultsFromDistribution(int numOfProcess, char* tempDir);
 void printListOfLines(ListOfLines* listsOfLines, int numOfLists);
-char* process(ListOfLines* listOfLines);
+char* processV1(ListOfLines* listOfLines);
 int sortingByAscendingFunction(const void* a, const void* b);
+void processV2(ListOfLines* listOfLines, char* tempDir, int processNum);
+char* generateSourceFragmentFileName(char* tempDir, int processNum);
 
 #endif

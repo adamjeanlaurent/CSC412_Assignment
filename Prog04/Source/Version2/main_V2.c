@@ -2,7 +2,11 @@
 #include <stdlib.h>
 #include <sys/types.h> 
 #include <unistd.h>
-#include <sys/wait.h> 
+#include <sys/wait.h>
+#include "../fileSystemHandler.h"
+#include "../processing.h"
+#include "../distributor.h"
+#include "../splitWork.h" 
 
 int main(int argc, char** argv)
 {
@@ -15,11 +19,61 @@ int main(int argc, char** argv)
     int numOfProcesses = atoi(argv[1]) + 1;
     char* dataSetFilePath = argv[2];
     char* outputFilePath = argv[3];
+    char* tempDir = "../Source/Version2/temp/";
 
-    
+    int i;
 
-    // plan:
+    Array2D* dataFileList = getFileList(dataSetFilePath);
+
+    int numOfFiles = dataFileList->rows;
+
+    Array2D** workLists = splitWork(numOfFiles, numOfProcesses, dataFileList);
+
+    pid_t distrubutorChildProcessTable[numOfProcesses];
+
+    for(i = 0; i < numOfProcesses; i++)
+    {
+        pid_t pid = fork();
+
+        if(pid == 0)
+        {   
+            distribute(workLists[i], i, tempDir);
+            exit(0);
+        }
+        else
+        {
+            distrubutorChildProcessTable[i] = pid;
+        }
+    }
+
+    int status = 0;
+    for(i = 0; i < numOfProcesses; i++)
+    {
+        waitpid(distrubutorChildProcessTable[i], &status, 0);
+    }
+
+    ListOfLines* distributedDataFiles = collectResultsFromDistribution(numOfProcesses, tempDir);
+
+    pid_t dataProcessingChildProcessTable[numOfProcesses];
+
+    for(i = 0; i < numOfProcesses; i++)
+    {
+        pid_t pid = fork();
+
+        if(pid == 0)
+        {
+            processV2(&distributedDataFiles[i], tempDir, i);
+            exit(0);
+        }
+    }
+
+    for(i = 0; i < numOfProcesses; i++)
+    {
+        waitpid(dataProcessingChildProcessTable[i], &status, 0);
+    }
     
+    // plan:    
+
     // Step 1: get file list
     // Step 2: split work
     // Step 3: Create n child processes, store pids in array, assign each process an index # (i)
