@@ -1,33 +1,40 @@
-#include "distributor.h"
+// system includes
 #include <stdio.h>
 #include <stdlib.h>
+
+// custom includes
+#include "distributor.h"
 #include "string.h"
 
 void distribute(Array2D* workList, int currentProcess, char* tempDir)
 {
     int i;
 
+    // iterate through every file path in the work list
     for(i = 0; i < workList->rows; i++)
     {
         char* filePath = workList->contents[i];
         FILE* fp;
         int index;
 
+        // open file path of fragment file
         fp = fopen(filePath, "r");
     
         if(fp != NULL)
         {
-            // get index number, line number, and line of file
+            // get index number fragment file
             fscanf(fp, "%d", &index);
             fclose(fp);
             
+            // generate to do list file name of index found
             char* toDoListFilePath = generateToDoListFileName(tempDir, index); 
-          
-            
+
+            // open / create to do list file 
             fp = fopen(toDoListFilePath, "a");
 
             if(fp != NULL)
             {
+                // write fragment file path to do list
                 fprintf(fp, "%s\n", filePath);
                 fclose(fp);
             }
@@ -39,9 +46,12 @@ void distribute(Array2D* workList, int currentProcess, char* tempDir)
 
 char* generateToDoListFileName(char* tempDir, int processNum)
 {
+    // get length of processNum
     int lengthOfProcessNum = fastLengthOfNumber(processNum);
     char* toDoListFileName = "toDoList_";
 
+    // allocate memory for full path + file name + extension + number 
+    // combine into string
     int len = strlen(tempDir) + lengthOfProcessNum + strlen(toDoListFileName) + 5;
     char* toDoListFilePath = (char*)calloc(len, sizeof(char));
     sprintf(toDoListFilePath, "%s%s%d.txt", tempDir, toDoListFileName, processNum);

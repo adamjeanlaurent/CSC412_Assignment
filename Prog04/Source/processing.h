@@ -3,16 +3,23 @@
 
 #include "fileSystemHandler.h"
 
+/** Represents a single line of a source file. */
 typedef struct Line
 {
-   int index;
-   int lineNum;
-   char* contents;
+    /** index of line. */
+    int index;
+    /** line number of line. */
+    int lineNum;
+    /** string storing source code for the line. */
+    char* contents;
 } Line;
 
+/** Stores an array of struct Line, along with the number of elements in the array. */
 typedef struct ListOfLines
 {
+    /* length of lines array. */
     int length;
+    /* array of struct Line. */
     Line* lines;
 } ListOfLines;
 
@@ -63,5 +70,13 @@ void processV2(ListOfLines* listOfLines, char* tempDir, int processNum);
  * @return string containing file path created.
  */ 
 char* generateSourceFragmentFileName(char* tempDir, int processNum);
+
+/**
+ * Summary: Custom destructor for a list of lines array.
+ * @param listOfLines: pointer to an array of malloced list of line objects.
+ * @param numOfLists: number of elements in the array.
+ * @return void
+ */ 
+void freeListOfLines(ListOfLines* listOfLines, int numOfLists);
 
 #endif

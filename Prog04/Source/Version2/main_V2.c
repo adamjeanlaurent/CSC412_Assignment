@@ -1,8 +1,13 @@
+// system includes
 #include <stdio.h> 
 #include <stdlib.h>
+
+// POSIX includes
 #include <sys/types.h> 
 #include <unistd.h>
 #include <sys/wait.h>
+
+// custom includes
 #include "../fileSystemHandler.h"
 #include "../processing.h"
 #include "../distributor.h"
@@ -10,12 +15,14 @@
 
 int main(int argc, char** argv)
 {
+    // verify correct number of arguments
      if(argc != 4)
     {
         printf("usage: %s numOfProcesses DataFolderPath OutputPath \n", argv[0]);
         return 0;
     }
     
+    // parse arguments
     int numOfProcesses = atoi(argv[1]) + 1;
     char* dataSetFilePath = argv[2];
     char* outputFilePath = argv[3];
@@ -23,23 +30,29 @@ int main(int argc, char** argv)
 
     int i;
 
+    // get list of all files in the data set directory
     Array2D* dataFileList = getFileList(dataSetFilePath);
 
     int numOfFiles = dataFileList->rows;
 
+    // split data files evenly into n lists
     Array2D** workLists = splitWork(numOfFiles, numOfProcesses, dataFileList);
 
+    // holds process ids of distribution children processes
     pid_t distrubutorChildProcessTable[numOfProcesses];
 
     for(i = 0; i < numOfProcesses; i++)
     {
+        // create new process
         pid_t pid = fork();
 
+        // if child process distribute files
         if(pid == 0)
         {   
             distribute(workLists[i], i, tempDir);
             exit(0);
         }
+        // if not a child process add to process table
         else
         {
             distrubutorChildProcessTable[i] = pid;
@@ -47,59 +60,61 @@ int main(int argc, char** argv)
     }
 
     int status = 0;
+
+    // wait for distribution children to finish
     for(i = 0; i < numOfProcesses; i++)
     {
         waitpid(distrubutorChildProcessTable[i], &status, 0);
     }
 
+    // store results of distribution into Array of ListOfLines for easier sorting
     ListOfLines* distributedDataFiles = collectResultsFromDistribution(numOfProcesses, tempDir);
 
+    // holds process ids of data processing children processes
     pid_t dataProcessingChildProcessTable[numOfProcesses];
 
     for(i = 0; i < numOfProcesses; i++)
     {
+        // create new process
         pid_t pid = fork();
 
+        // if child process data files
         if(pid == 0)
         {
             processV2(&distributedDataFiles[i], tempDir, i);
             exit(0);
         }
+        // if not a child process ad to process table
         else
         {
             dataProcessingChildProcessTable[i] = pid;
         }
-        
     }
 
+    // wait for data processing children to finish
     for(i = 0; i < numOfProcesses; i++)
     {
         waitpid(dataProcessingChildProcessTable[i], &status, 0);
     }
 
+    // combine sorted fragments into full source file
     concatSourceFragments(outputFilePath, numOfProcesses, tempDir);
+    
+    // free all dispatcher dynamically allocated memory 
 
-    // plan:    
+    // free work lists
+    for(i = 0; i < numOfProcesses; i++)
+    {
+        freeArray2D(workLists[i]);
+    }
+    
+    // free work list
+    free(workLists);
+    
+    // free data list file
+    freeArray2D(dataFileList);
 
-    // Step 1: get file list
-    // Step 2: split work
-    // Step 3: Create n child processes, store pids in array, assign each process an index # (i)
-    // Step 4: each child process calls distribute with it's index of the work list
-    // Step 5: Parent process waits for these children to finish
-    // Step 6: collect results, translate to new data structure in main
-    // Step 7: create n more children to do the data processing
-    // Step 8: each data process call writes it's output to a file
-    // Step 9: wait for data processeses to finsih
-    // Step 10: main reads n files and concats them into the output file
-
-    // new functionality needed:
-
-    // getting file list is same
-    // splitting work is same
-    // distribute is same
-    // collect results is same
-    // data processing needs to write to a file instead of returning a long string (what should be write to this file? sorted file names or lines?)
-    // read n sorted files and output to one source file 
-
+    // free list of distributed data files
+    freeListOfLines(distributedDataFiles, numOfProcesses);
     return 0;
 }

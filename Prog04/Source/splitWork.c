@@ -1,7 +1,10 @@
-#include "splitWork.h"
+// system includes
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+
+// custom includes
+#include "splitWork.h"
 
 int* getIndexRangesForProcesses(int numOfFiles, int numOfProcess) 
 {
@@ -71,6 +74,7 @@ Array2D** splitWork(int numOfFiles, int numOfProcess, Array2D* fileList)
         {
             // filename of file to add right now
             char* fileToAdd = fileList->contents[soFar];
+            
             // dynamically allocate memory for jth row of workLists ith list
             // use size of filename + 1
             workLists[i]->contents[j] = (char*)calloc(strlen(fileToAdd) + 1, sizeof(char));

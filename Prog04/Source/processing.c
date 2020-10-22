@@ -1,6 +1,9 @@
+// system includes
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+// custom includes
 #include "processing.h"
 #include "distributor.h"
 
@@ -53,17 +56,21 @@ ListOfLines* collectResultsFromDistribution(int numOfProcess, char* tempDir)
                     listOfLines[i].lines[n].index = index;
                     listOfLines[i].lines[n].lineNum = lineNum;
                     listOfLines[i].lines[n].contents = (char*)calloc(strlen(lineBuffer) + 1, sizeof(char));
-                    // sprintf(listOfLines[i].lines[n].contents, "%s", lineBuffer);
+
+                    // remove new line from buffer
                     lineBuffer[strcspn(lineBuffer, "\n")] = 0;
+
+                    // copy buffer into object
                     strcpy(listOfLines[i].lines[n].contents, lineBuffer);
-                    // puts(listOfLines[i].lines[n].contents);
+
+                    // add null terminator
                     listOfLines[i].lines[n].contents[strlen(listOfLines[i].lines[n].contents)] = '\0';
                     
                     listOfLines[i].length++;
 
                     // realloc 1 more space
                     listOfLines[i].lines = (Line*)realloc(listOfLines[i].lines, (listOfLines[i].length + 1) * sizeof(Line));
-                    //printf("i: %d n: %d \n %s\n",i,n,listOfLines[i].lines[n].contents);
+
                     fclose(fragmentFP);
                 }
             }
@@ -78,7 +85,8 @@ void printListOfLines(ListOfLines* list, int numOfLists)
 {
     int i;
     int j;
-     printf("number Of lists %d: \n", numOfLists);
+    printf("number Of lists %d: \n", numOfLists);
+
     // for all list of lines
     for(i = 0; i < numOfLists; i++)
     {
@@ -135,6 +143,7 @@ char* processV1(ListOfLines* listOfLines)
 void processV2(ListOfLines* ListOfLines, char* tempDir, int processNum)
 {   
     int i;
+
     // sort elements 
     int numOfLines = ListOfLines->length;
     qsort(ListOfLines->lines, numOfLines, sizeof(Line), sortingByAscendingFunction);
@@ -172,11 +181,34 @@ int sortingByAscendingFunction(const void* a, const void* b)
 
 char* generateSourceFragmentFileName(char* tempDir, int processNum)
 {
+    // get length of process number
     int lengthOfProcessNum = fastLengthOfNumber(processNum);
     char* fragmentFileName = "Fragment_";
 
+    // dynamically allocate string to hold tempDir + len of process number + Fragment_ + .txt
+    // combine full path string
     int len = strlen(tempDir) + lengthOfProcessNum + strlen(fragmentFileName) + 5; 
     char* fragmentFilePath = (char*)calloc(len, sizeof(char));
     sprintf(fragmentFilePath, "%s%s%d.txt", tempDir, fragmentFileName, processNum);
     return fragmentFilePath;
+}
+
+void freeListOfLines(ListOfLines* listOfLines, int numOfLists)
+{
+    int i;
+    int j;
+
+    for(i = 0; i < numOfLists; i++)
+    {
+         for(j = 0; j < listOfLines[i].length; i++)
+         {
+             // free pointer to line's contents
+             free(listOfLines[i].lines[j].contents);
+         }
+         // free pointer to list of lines
+         free(listOfLines[i].lines);
+    }
+
+    // free pointer to ListOfLines array
+    free(listOfLines);
 }

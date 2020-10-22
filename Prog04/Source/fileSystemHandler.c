@@ -27,6 +27,7 @@ Array2D* getFileList(char *filePath)
 
     if(dp != NULL)
     {
+        // loop through data directory 
         while((ep = readdir(dp)) != NULL)
         {
             if(ep->d_type == DT_REG)
@@ -59,6 +60,8 @@ Array2D* getFileList(char *filePath)
 
 char* concatFileNameAndPath(char* fileName, char* filePath, int lengthOfFileName, int lengthOfFilePath)
 {
+    // allocate memory for length of fileName + lengthOf filePath + null terminator
+    // combine into full path string
     char* combinedPath = (char*)calloc((lengthOfFileName + lengthOfFilePath + 1), sizeof(char));
     sprintf(combinedPath, "%s%s", filePath, fileName);
     
@@ -69,6 +72,7 @@ void printArray2D(Array2D* array2D)
 {
     int i;
 
+    // print each row as string
     for(i = 0; i < array2D->rows; i++)
     {
         puts(array2D->contents[i]);
@@ -83,18 +87,21 @@ void freeArray2D(Array2D* array2D)
     {
         if(array2D->contents[i] != NULL)
         {
+            // free row
              free(array2D->contents[i]);
         }
        
     }
     
     if(array2D->contents != NULL)
-    {
-          free(array2D->contents);
+    {   
+        // free array of pointers
+        free(array2D->contents);
     }
   
     if(array2D != NULL)
     {
+        // free pointer
         free(array2D);
     }
 }
@@ -105,6 +112,7 @@ void writeStringToFile(char* reconstructedFile, char* outputPath)
     
     if(fp != NULL)
     {
+        // write string to file
          fputs(reconstructedFile, fp);
          fclose(fp);
     }
@@ -136,7 +144,7 @@ void concatSourceFragments(char* outputPath, int numOfProcess, char* tempDir)
 
                 char buffer[500];
 
-                // skip next line
+                // skip first line null terminator
                 fgets(buffer, 500, fragmentFP);
  
                 // read all lines in file and write to output
