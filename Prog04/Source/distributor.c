@@ -3,6 +3,11 @@
 #include <stdlib.h>
 #include "string.h"
 
+/**
+ Description: tests!
+ summary: hello world
+ return: bye 
+ */
 void distribute(Array2D* workList, int currentProcess, char* tempDir)
 {
     int i;
