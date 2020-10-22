@@ -41,6 +41,6 @@ touch $OUTPUT_FILE_PATH
 ../Source/Version2/v2 $GREATEST_INDEX $PATH_TO_DATA_FILES $OUTPUT_FILE_PATH
 
 # delete temp dir
-# rm -r $TEMP_DIR
+rm -r $TEMP_DIR
 
 # test ./script02.sh /Users/ajean-laurent/Desktop/CSC_412_Work/Prog04/Data-Sets/Data-Set-1/ /Users/ajean-laurent/Desktop/CSC_412_Work/Prog04/Source/Version2/outputfile.c

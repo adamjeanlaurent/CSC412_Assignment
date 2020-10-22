@@ -131,14 +131,19 @@ void concatSourceFragments(char* outputPath, int numOfProcess, char* tempDir)
             if(fragmentFP != NULL)
             {
                 // read fragment file
-                int numOfLinesInFile = fscanf(fragmentFP, "%d", &numOfLinesInFile);
-
+                int numOfLinesInFile = 0;
+                fscanf(fragmentFP, "%d", &numOfLinesInFile);                
+    
                 char buffer[500];
+
+                // skip next line
+                fgets(buffer, 500, fragmentFP);
+                printf("%d\n", numOfLinesInFile);
                 // read all lines in file and write to output
                 for(j = 0; j < numOfLinesInFile; j++)
                 {       
                     fgets(buffer, 500, fragmentFP);
-
+                   
                     // remove newline from buffer
                     buffer[strcspn(buffer, "\n")] = 0;
 
