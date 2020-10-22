@@ -5,6 +5,7 @@
 
 // custon includes
 #include "fileSystemHandler.h"
+#include "processing.h"
 
 // POSIX includes
 #include <sys/types.h>
@@ -98,7 +99,7 @@ void freeArray2D(Array2D* array2D)
     }
 }
 
-void writeReconstructedFileToOutputDir(char* reconstructedFile, char* outputPath)
+void writeStringToFile(char* reconstructedFile, char* outputPath)
 {
     FILE* fp = fopen(outputPath ,"a");
     
@@ -106,5 +107,47 @@ void writeReconstructedFileToOutputDir(char* reconstructedFile, char* outputPath
     {
          fputs(reconstructedFile, fp);
          fclose(fp);
+    }
+}
+
+void concatSourceFragments(char* outputPath, int numOfProcess, char* tempDir)
+{
+    int i;  
+    int j;
+
+    // create output file
+    FILE* outputFP = fopen(outputPath ,"a");
+
+    if(outputFP != NULL)
+    {
+        // read source fragments
+        for(i = 0; i < numOfProcess; i++)
+        {
+            char* fragmentFilePath = generateSourceFragmentFileName(tempDir, i);
+            
+            // open fragment
+            FILE* fragmentFP = fopen(fragmentFilePath ,"r");
+
+            if(fragmentFP != NULL)
+            {
+                // read fragment file
+                int numOfLinesInFile = fscanf(fragmentFP, "%d", &numOfLinesInFile);
+
+                char buffer[500];
+                // read all lines in file and write to output
+                for(j = 0; j < numOfLinesInFile; j++)
+                {       
+                    fgets(buffer, 500, fragmentFP);
+
+                    // remove newline from buffer
+                    buffer[strcspn(buffer, "\n")] = 0;
+
+                    // write buffer to output file
+                    fprintf(outputFP, "%s\n", buffer);
+                }   
+                fclose(fragmentFP);
+            }
+        }
+        fclose(outputFP);
     }
 }

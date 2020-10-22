@@ -39,14 +39,14 @@ int main(int argc, char** argv)
 
     for(i = 0; i < numOfProcesses; i++)
     {
-        char* partialOfReconstructedSourceFile = process(&l[i]);
+        char* partialOfReconstructedSourceFile = processV1(&l[i]);
         int len = strlen(partialOfReconstructedSourceFile) + strlen(reconstructedSourceFile) + 1;
         reconstructedSourceFile = (char*)realloc(reconstructedSourceFile, sizeof(char) * len);
         strcat(reconstructedSourceFile, partialOfReconstructedSourceFile);
         free(partialOfReconstructedSourceFile);
     }
     
-    writeReconstructedFileToOutputDir(reconstructedSourceFile, outputFilePath);
+    writeStringToFile(reconstructedSourceFile, outputFilePath);
     
     for(i = 0; i < numOfProcesses; i++)
     {

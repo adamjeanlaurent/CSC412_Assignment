@@ -65,13 +65,20 @@ int main(int argc, char** argv)
             processV2(&distributedDataFiles[i], tempDir, i);
             exit(0);
         }
+        else
+        {
+            dataProcessingChildProcessTable[i] = pid;
+        }
+        
     }
 
     for(i = 0; i < numOfProcesses; i++)
     {
         waitpid(dataProcessingChildProcessTable[i], &status, 0);
     }
-    
+
+    concatSourceFragments(outputFilePath, numOfProcesses, tempDir);
+
     // plan:    
 
     // Step 1: get file list

@@ -137,7 +137,7 @@ void processV2(ListOfLines* ListOfLines, char* tempDir, int processNum)
     int i;
     // sort elements 
     int numOfLines = ListOfLines->length;
-    qsort(printListOfLines, numOfLines, sizeof(Line), sortingByAscendingFunction);
+    qsort(ListOfLines->lines, numOfLines, sizeof(Line), sortingByAscendingFunction);
 
     // write to output file
 
@@ -175,9 +175,8 @@ char* generateSourceFragmentFileName(char* tempDir, int processNum)
     int lengthOfProcessNum = fastLengthOfNumber(processNum);
     char* fragmentFileName = "Fragment_";
 
-    int len = strlen(tempDir) + lengthOfProcessNum + strlen(fragmentFileName) + 5;
+    int len = strlen(tempDir) + lengthOfProcessNum + strlen(fragmentFileName) + 5; 
     char* fragmentFilePath = (char*)calloc(len, sizeof(char));
     sprintf(fragmentFilePath, "%s%s%d.txt", tempDir, fragmentFileName, processNum);
-    
     return fragmentFilePath;
 }
