@@ -1,5 +1,5 @@
-#ifndef PROCESSING_H
-#define PROCESSING_H
+#ifndef PROCESSING_V1_H
+#define PROCESSING_V1_H
 
 #include "fileSystemHandler.h"
 

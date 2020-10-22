@@ -21,8 +21,7 @@ fi
 GREATEST_INDEX=0
 
 # loop through .txt files in path to data files
-for FILE in "$PATH_TO_DATA_FILES"*.text ; do
-
+for FILE in "$PATH_TO_DATA_FILES"*.txt ; do
     # get index of file
     FILE_INDEX=$(grep -o '^[0-9]*' $FILE)
     # if index of file is greatest than greatest index so far, overwrite it with index of file
@@ -35,11 +34,13 @@ done
 # build all execs
 sh ./build.sh
 
-# # run version 1
+# create output file
+touch $OUTPUT_FILE_PATH
+
+# run version 1
 ../Source/Version1/v1 $GREATEST_INDEX $PATH_TO_DATA_FILES $OUTPUT_FILE_PATH
 
-# # delete temp dir
+# delete temp dir
 rm -r $TEMP_DIR
 
-
-# test ./script01.sh /Users/ajean-laurent/Desktop/CSC_412_Work/Prog04/Data-Sets/Large-Data-Sets/DataSet-1--2-procs/ /Users/ajean-laurent/Desktop/CSC_412_Work/Prog04/Source/Version1/outputfile.c
+# test ./script01.sh /Users/ajean-laurent/Desktop/CSC_412_Work/Prog04/Data-Sets/Data-Set-1/ /Users/ajean-laurent/Desktop/CSC_412_Work/Prog04/Source/Version1/outputfile.c

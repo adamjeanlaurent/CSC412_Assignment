@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "fileSystemHandler.h"
-#include "processing.h"
-#include "distributor.h"
-#include "splitWork.h"
+#include "../fileSystemHandler.h"
+#include "../processing.h"
+#include "../distributor.h"
+#include "../splitWork.h"
 
 int main(int argc, char** argv)
 {

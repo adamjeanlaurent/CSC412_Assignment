@@ -1,5 +1,5 @@
-#ifndef SPLITWORK_H
-#define SPLITWORK_H
+#ifndef SPLITWORK_V1_H
+#define SPLITWORK_V1_H
 
 #include "fileSystemHandler.h"
 

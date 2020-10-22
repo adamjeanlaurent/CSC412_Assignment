@@ -1,5 +1,5 @@
-#ifndef FILESYSTEMHANDLER_H
-#define FILESYSTEMHANDLER_H
+#ifndef FILESYSTEMHANDLER_V1_H
+#define FILESYSTEMHANDLER_V1_H
 
 typedef struct Array2D {
     int rows;
