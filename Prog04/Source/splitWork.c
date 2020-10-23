@@ -12,6 +12,8 @@ int* getIndexRangesForProcesses(int numOfFiles, int numOfProcess)
 
     int i;
     
+    // if number of files divides evenly into the number of processes
+    // then each process will process the same number of files
     if(numOfFiles % numOfProcess == 0)
     {
         for(i = 0; i < numOfProcess; i++)
@@ -20,10 +22,11 @@ int* getIndexRangesForProcesses(int numOfFiles, int numOfProcess)
         }
     }
 
+    // split the files into as evenly as possible
     else
     {
         int upTo = numOfProcess - (numOfFiles % numOfProcess);
-        int quotient = numOfFiles/numOfProcess;
+        int quotient = numOfFiles/ numOfProcess;
         for(i = 0; i < numOfProcess; i++)
         {
             if(i >= upTo)

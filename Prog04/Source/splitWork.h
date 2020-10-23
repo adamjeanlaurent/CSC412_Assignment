@@ -7,7 +7,7 @@
  * Summary: Splits a larger number (numOfFiles) into n (numOfProcess) parts, keeping the difference between the n parts minimal.
  * @param numOfFiles: number of file to split.
  * @param numOfProcess: number of processes that the files will be broken into.
- * @return array of integers storing the split parts. Example: numOfFiles = 10, numOfProcess = 3. output = [3,3,4]
+ * @return array of integers storing the split parts. Example: numOfFiles = 40, numOfProcess = 15. output = [2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3]
  */ 
 int* getIndexRangesForSplittingWork(int numOfFiles, int numOfProcess);
 

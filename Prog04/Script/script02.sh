@@ -37,7 +37,7 @@ sh ./build.sh
 # create output file
 touch $OUTPUT_FILE_PATH
 
-# run version 1
+# run version 2
 ../Source/Version2/v2 $GREATEST_INDEX $PATH_TO_DATA_FILES $OUTPUT_FILE_PATH
 
 # delete temp dir

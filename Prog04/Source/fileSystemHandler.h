@@ -3,8 +3,9 @@
 
 /** Stores a 2D array of characters. In laymans terms, an array of string. */
 typedef struct Array2D {
-    /**  */
+    /** num of rows in the 2D Array. */
     int rows;
+    /** 2D array of characters. */
     char** contents;
 } Array2D;
 

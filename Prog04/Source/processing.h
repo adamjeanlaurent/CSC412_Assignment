@@ -17,9 +17,9 @@ typedef struct Line
 /** Stores an array of struct Line, along with the number of elements in the array. */
 typedef struct ListOfLines
 {
-    /* length of lines array. */
+    /** length of lines array. */
     int length;
-    /* array of struct Line. */
+    /** array of struct Line. */
     Line* lines;
 } ListOfLines;
 
