@@ -43,6 +43,7 @@ void freeArray2D(Array2D* array2D);
 /**
  * Summary: Writes a string to a file.
  * @param reconstructedFile: string to write to file, called reconstructedFile because it's used in Version 1 to write a long string representing a fragment of a source file to an output source file.
+ * @param outputPath: output file to write to.
  * @return void
  */ 
 void writeStringToFile(char* reconstructedFile, char* outputPath);

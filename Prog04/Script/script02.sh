@@ -5,7 +5,7 @@ PATH_TO_DATA_FILES="$1"
 OUTPUT_FILE_PATH="$2"
 
 # temp directory to hold files created during execution
-TEMP_DIR="../Source/Version2/temp/"
+TEMP_DIR="./temp/"
 
 # create temp directory
 mkdir "${TEMP_DIR}"

@@ -16,7 +16,7 @@
 int main(int argc, char** argv)
 {
     // verify correct number of arguments
-     if(argc != 4)
+    if(argc != 4)
     {
         printf("usage: %s numOfProcesses DataFolderPath OutputPath \n", argv[0]);
         return 0;
@@ -26,7 +26,7 @@ int main(int argc, char** argv)
     int numOfProcesses = atoi(argv[1]) + 1;
     char* dataSetFilePath = argv[2];
     char* outputFilePath = argv[3];
-    char* tempDir = "../Source/Version2/temp/";
+    char* tempDir = "./temp/";
 
     int i;
 
@@ -90,7 +90,7 @@ int main(int argc, char** argv)
             dataProcessingChildProcessTable[i] = pid;
         }
     }
-
+    
     // wait for data processing children to finish
     for(i = 0; i < numOfProcesses; i++)
     {

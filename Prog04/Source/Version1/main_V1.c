@@ -22,7 +22,7 @@ int main(int argc, char** argv)
     int numOfProcesses = atoi(argv[1]) + 1; // + 1 because processes are 0 indexed
     char* dataSetFilePath = argv[2];
     char* outputFilePath = argv[3];
-    char* tempDir = "../Source/Version1/temp/";
+    char* tempDir = "./temp/";
 
     int i;
 
