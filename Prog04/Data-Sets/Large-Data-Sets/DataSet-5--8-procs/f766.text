@@ -1,1 +1,0 @@
-5 930                     pixelData[index++] = (unsigned char) (valScale*theBlue);

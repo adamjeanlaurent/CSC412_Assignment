@@ -1,1 +1,0 @@
-6 1003                         fscanf(inPPM, "%c", pixelData + index);

@@ -1,1 +1,0 @@
-11 1204     fscanf(inPPM, "%[\n\r\t ]", skip);

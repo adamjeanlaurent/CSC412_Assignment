@@ -1,1 +1,0 @@
-21 852         (*cropCornerY + *cropHeight >= imageHeight))

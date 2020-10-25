@@ -1,1 +1,0 @@
-33 665         swapRGBA(data, info.height, info.width);

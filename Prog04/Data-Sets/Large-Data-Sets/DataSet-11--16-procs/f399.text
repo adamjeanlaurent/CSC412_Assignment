@@ -1,1 +1,0 @@
-10 847     if (sscanf(argv[6], "%u", cropHeight) != 1)

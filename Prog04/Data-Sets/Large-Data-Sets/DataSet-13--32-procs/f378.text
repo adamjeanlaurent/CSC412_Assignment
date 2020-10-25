@@ -1,1 +1,0 @@
-11 467     if (outFolderPath[strlen(outFolderPath)-1] != '/')

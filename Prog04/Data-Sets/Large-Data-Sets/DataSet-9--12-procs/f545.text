@@ -1,1 +1,0 @@
-3 344     char* outImagePath = produceOutFilePath(inputImagePath, outFolderPath, rot);

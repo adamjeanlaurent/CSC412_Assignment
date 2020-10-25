@@ -1,1 +1,0 @@
-83 838         errorReport(INVALID_CROP_X_TYPE, argv[3]);

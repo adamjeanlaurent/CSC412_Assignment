@@ -55,7 +55,7 @@ char* processV1(ListOfLines* listOfLines);
 int sortingByAscendingFunction(const void* a, const void* b);
 
 /**
- * Summary: Performs data processing for version1. sorts an array of ListOfLines->lines by indexNumber, then writes sorted lines of fragment to fragment file.
+ * Summary: Performs data processing for version2. sorts an array of ListOfLines->lines by indexNumber, then writes sorted lines of fragment to fragment file.
  * @param listOfLines: pointer to a list of lines to sort and write to file.
  * @param tempDir: relative path to directory that holds temporary files for inter-process communcation.
  * @param processNum: index of data processing process that will process this fragment.

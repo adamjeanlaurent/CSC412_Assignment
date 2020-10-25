@@ -1,1 +1,0 @@
-7 592     fread( head, sizeof(char), 18, tga_in ) ;

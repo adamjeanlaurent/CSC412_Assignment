@@ -1,1 +1,0 @@
-19 768         head[14] = (char) (info->height & 0x0FF) ;

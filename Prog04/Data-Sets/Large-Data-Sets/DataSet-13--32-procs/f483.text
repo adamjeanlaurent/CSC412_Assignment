@@ -1,1 +1,0 @@
-30 1207     fscanf(inPPM, "%[^\n\r\t ]", buf);

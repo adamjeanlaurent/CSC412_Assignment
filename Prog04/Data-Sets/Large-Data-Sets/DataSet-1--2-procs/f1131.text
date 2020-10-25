@@ -1,1 +1,0 @@
-0 539 void swapRGBA(unsigned char* theData, int height, int width);

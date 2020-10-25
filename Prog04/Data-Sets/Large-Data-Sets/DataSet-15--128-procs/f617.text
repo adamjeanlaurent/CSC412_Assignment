@@ -1,1 +1,0 @@
-70 700     FILE* tga_out = fopen(filePath, "wb" );

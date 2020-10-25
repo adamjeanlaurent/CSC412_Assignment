@@ -1,1 +1,0 @@
-11 1232     fscanf(inPPM,"%d", nbRows);

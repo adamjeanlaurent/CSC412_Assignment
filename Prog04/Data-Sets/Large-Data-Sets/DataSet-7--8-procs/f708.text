@@ -1,1 +1,0 @@
-6 1084         printf("Error in writePPM: file name == NULL\n");

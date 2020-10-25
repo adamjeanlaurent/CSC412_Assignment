@@ -18,6 +18,11 @@ if [ "$LAST_CHAR_OF_PATH_TO_DATA_FILES" != "/" ] ; then
     PATH_TO_DATA_FILES="${PATH_TO_DATA_FILES}/"
 fi
 
+# ensure that output file extension ends in .c
+if [ ${OUTPUT_FILE_PATH: -2} != ".c" ] ; then
+    OUTPUT_FILE_PATH="${OUTPUT_FILE_PATH}.c"
+fi
+
 GREATEST_INDEX=0
 
 # loop through .txt files in path to data files

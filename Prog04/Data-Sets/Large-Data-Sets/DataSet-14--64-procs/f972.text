@@ -1,1 +1,0 @@
-16 336     int err = determineRotation(argv[1], &rot);

@@ -1,1 +1,0 @@
-19 771         fwrite( head, sizeof(char), 18, tga_out );

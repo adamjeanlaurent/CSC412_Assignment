@@ -1,1 +1,0 @@
-29 1139         fprintf(fp, "%d %d\n", img->width, img->height);

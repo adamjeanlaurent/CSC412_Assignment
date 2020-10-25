@@ -1,1 +1,0 @@
-2 868         memcpy((unsigned char*) imageOut.raster + (imageOut.height - i - 1)*imageOut.bytesPerRow,

@@ -1,1 +1,0 @@
-76 765         head[13] = (char) (info->width >> 8) ;      // Image width.

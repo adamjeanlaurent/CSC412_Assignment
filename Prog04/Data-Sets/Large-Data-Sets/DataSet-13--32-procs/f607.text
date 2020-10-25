@@ -1,1 +1,0 @@
-20 791 ImageStruct newImage(unsigned int width, unsigned int height, ImageType type,

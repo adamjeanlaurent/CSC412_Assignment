@@ -1,1 +1,0 @@
-2 431             *rotVal = (*rotVal + NUM_ROTATIONS - 1) % NUM_ROTATIONS;

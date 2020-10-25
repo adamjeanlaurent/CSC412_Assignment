@@ -8,7 +8,7 @@
 #include "../processing.h"
 #include "../distributor.h"
 #include "../splitWork.h"
-
+ 
 int main(int argc, char** argv)
 {
     // verify the corrent number of arguments were passed
@@ -23,7 +23,7 @@ int main(int argc, char** argv)
     char* dataSetFilePath = argv[2];
     char* outputFilePath = argv[3];
     char* tempDir = "./temp/";
-
+    
     int i;
 
     // get list of all files in data directory
@@ -66,8 +66,13 @@ int main(int argc, char** argv)
     // write string containing output file to actual output file
     writeStringToFile(reconstructedSourceFile, outputFilePath);
     
-    // free all dispatcher dynamically allocated memory 
+    // free all dynamically allocated memory 
 
+    // free reconstructed source file string 
+    free(reconstructedSourceFile);
+
+    // free all dispatcher dynamically allocated memory 
+    
     // free work lists
     for(i = 0; i < numOfProcesses; i++)
     {
@@ -82,5 +87,6 @@ int main(int argc, char** argv)
 
     // free list of distributed data files
     freeListOfLines(distributedDataFiles, numOfProcesses);
+
     return 0;
 }

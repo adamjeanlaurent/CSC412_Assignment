@@ -1,1 +1,0 @@
-11 459     while ((k>=1) && (inputImagePath[k-1] != '/'))

@@ -1,1 +1,0 @@
-8 906     unsigned int nbRows = 0, nbCols = 0, maxVal = 0;

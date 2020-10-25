@@ -1,1 +1,0 @@
-1 990                         pixelData[index++] = (unsigned char) (grayVal);

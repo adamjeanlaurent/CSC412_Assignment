@@ -1,1 +1,0 @@
-30 1181         printf("%s is not a file in the PPM format.\n", filePath);

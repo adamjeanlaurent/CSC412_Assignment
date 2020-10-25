@@ -1,1 +1,0 @@
-28 1121         unsigned char** raster2D = (unsigned char**) img->raster2D;

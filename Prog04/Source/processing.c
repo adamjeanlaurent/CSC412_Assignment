@@ -200,7 +200,7 @@ void freeListOfLines(ListOfLines* listOfLines, int numOfLists)
 
     for(i = 0; i < numOfLists; i++)
     {
-         for(j = 0; j < listOfLines[i].length; i++)
+         for(j = 0; j < listOfLines[i].length; j++)
          {
              // free pointer to line's contents
              free(listOfLines[i].lines[j].contents);

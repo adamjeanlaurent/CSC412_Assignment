@@ -1,1 +1,0 @@
-31 314 ImageStruct rotateImage270(ImageStruct* image);

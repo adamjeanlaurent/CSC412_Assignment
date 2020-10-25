@@ -1,1 +1,0 @@
-4 639             unsigned char* ptr = data + imgSize*4 - info.bytesPerRow;
