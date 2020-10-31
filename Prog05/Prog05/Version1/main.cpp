@@ -4,7 +4,8 @@
 #include <cstdio>
 #include <vector>
 
-using namespace std;
+#include "job.h"
+
 
 int main(int argc, char** argv)
 {
@@ -12,16 +13,16 @@ int main(int argc, char** argv)
     if(argc != 4)
     {
         // invalid arguments
-        cout << "usage: " << argv[0] << " <pathToJobFile> <pathToImages> <pathToOutput>" << endl;
+        std::cout << "usage: " << argv[0] << " <pathToJobFile> <pathToImages> <pathToOutput>" << std::endl;
         return 0;
     }   
-
-    string jobFilePath(argv[1]);
-    string pathToImages(argv[2]);
-    string pathToOutput(argv[3]);
+    
+    std::string jobFilePath(argv[1]);
+    std::string pathToImages(argv[2]);
+    std::string pathToOutput(argv[3]);
 
    // read job file
-
-
+    std::vector<Job> jobList = GetJobList(jobFilePath);
+    
     return 0;
 }

@@ -5,8 +5,6 @@
 #include <cstdio>
 #include <vector>
 
-using namespace std;
-
 enum Rotation
 {
     l,
@@ -33,7 +31,11 @@ struct Job
     int h; // only used for crop task
     Rotation rotation; // only used for rotate task
     Task task;
-    string imageFilename;
+    std::string imageFilename;
 };
 
-vector<Job> GetJobList(string jobFilepath);
+std::vector<Job> GetJobList(std::string jobFilePath);
+
+Rotation RotationFromString(char* rotation);
+
+void PrintJobList(std::vector<Job> jobList);
