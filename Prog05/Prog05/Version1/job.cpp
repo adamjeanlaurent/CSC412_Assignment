@@ -5,13 +5,13 @@ std::vector<Job> GetJobList(std::string jobFilePath)
     FILE *fp = fopen(jobFilePath.c_str(), "r");
 
     std::vector<Job> jobList;
-
+    
     if (fp != NULL)
     {
         char command[20];
         char rotation[10];
         char filename[500];
-
+    
         // loop through enture job file
         while (fscanf(fp, "%s", command) == 1)
         {
@@ -48,8 +48,8 @@ std::vector<Job> GetJobList(std::string jobFilePath)
                 job.task = rotate;
 
                 fscanf(fp, "%s %s ", rotation, filename); // get rotation and image file name
-
-                job.rotation = RotationFromString(rotation); // set rotation
+                
+                job.rotation = std::string(rotation);
             }
             // end command
             else if (strcmp(command, "end") == 0)
@@ -71,30 +71,14 @@ std::vector<Job> GetJobList(std::string jobFilePath)
     return jobList;
 }
 
-Rotation RotationFromString(char *rotation)
+std::string TaskEnumToString(Task task)
 {
-    if (strcmp(rotation, "l") == 0)
-    {
-        return l;
-    }
-    else if (strcmp(rotation, "r") == 0)
-    {
-        return r;
-    }
-    else if (strcmp(rotation, "ll") == 0)
-    {
-        return ll;
-    }
-    else
-    {
-        return rr;
-    }
+    const char* TaskEnumStrings[] = { "flipH", "flipV", "gray", "crop", "rotate", "end" };
+    return std::string(TaskEnumStrings[task]);
 }
 
 void PrintJobList(std::vector<Job> jobList)
 {
-    const char* RotationEnumStrings[] = { "l", "r", "ll", "rr" };
-
     for (Job job : jobList)
     {
         switch (job.task)
@@ -117,7 +101,7 @@ void PrintJobList(std::vector<Job> jobList)
             break;
         case rotate:
             std::cout << "Command: rotate "
-                      << "fileName: " << job.imageFilename << " rotation: " << RotationEnumStrings[job.rotation] << std::endl;
+                      << "fileName: " << job.imageFilename << " rotation: " << job.rotation << std::endl;
             break;
         case end:
                 std::cout << "Command: End" << std::endl;

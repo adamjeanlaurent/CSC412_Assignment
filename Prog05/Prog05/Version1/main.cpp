@@ -1,28 +1,21 @@
 #include <iostream>
-#include <unistd.h>
 #include <string>
 #include <cstdio>
 #include <vector>
 
-#include "job.h"
-
+#include "dispatcher.h"
 
 int main(int argc, char** argv)
 {
     // parse input arguments
-    if(argc != 4)
+    if(argc != 5)
     {
         // invalid arguments
-        std::cout << "usage: " << argv[0] << " <pathToJobFile> <pathToImages> <pathToOutput>" << std::endl;
+        std::cout << "usage: " << argv[0] << " <pathToJobFile> <pathToImages> <pathToOutput> <pathToExecs>" << std::endl;
         return 0;
     }   
-    
-    std::string jobFilePath(argv[1]);
-    std::string pathToImages(argv[2]);
-    std::string pathToOutput(argv[3]);
 
-   // read job file
-    std::vector<Job> jobList = GetJobList(jobFilePath);
+    ProcessJobFile(argv[1], argv[2], argv[3], argv[4]);
     
     return 0;
 }
