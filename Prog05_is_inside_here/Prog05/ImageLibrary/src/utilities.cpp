@@ -5,6 +5,7 @@
 #include "flipV.h"
 #include "flipH.h"
 #include "rotate.h"
+#include <cstring>
 
 using namespace std;
 
