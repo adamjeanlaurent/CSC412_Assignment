@@ -1,4 +1,4 @@
-#!bin/bash
+#!/bin/bash
 
 DROP_FOLDER="$1"
 DATA_FOLDER="$2"
@@ -38,7 +38,14 @@ fi
 # watch drop folder
 inotifywait -m $DROP_FOLDER -e create -e moved_to |
     while read path action file; do
-        if [[ "$file" =~ .*txt$ ]]; then # Does the file end with .xml?
-            echo "txt file" # If so, do your thing here!
+    	# ends in .tga
+        if [[ "$file" =~ .*tga$ ]]; then 
+        	# move to image dir
+            echo "txt file" 
+        fi
+        # ends in .job
+        if [[ "$file" =~ .*job$ ]]; then
+        	# send to dispatcher 
+            echo "txt file" 
         fi
     done

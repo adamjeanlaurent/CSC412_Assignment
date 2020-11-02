@@ -7,11 +7,11 @@
 #include "job.h"
 #include "utility.h"
 
-Utility::Utility(std::string outputDir, std::string imageDir, Job j, std::string execDir)
+Utility::Utility(std::string outputDir, std::string imageDir, Job jobObj, std::string execDir)
 {
     outputPath = outputDir;
     imagePath = imageDir;
-    job = j;
+    job = jobObj;
     execPath = execDir;
 }
 
