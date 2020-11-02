@@ -5,7 +5,7 @@
 
 /**	Simple enum type to report optional arguments for the program
  */
-using RotationVal = enum 
+using RotationVal = enum
 {
 	NO_ROTATION = 0,
 	ROTATE_90,

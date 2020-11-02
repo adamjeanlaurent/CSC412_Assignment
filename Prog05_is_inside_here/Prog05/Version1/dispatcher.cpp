@@ -4,6 +4,9 @@
 #include <cstdio>
 #include <vector>
 
+#include <sys/types.h>
+#include <sys/wait.h>
+
 #include "job.h"
 #include "utility.h"
 #include "dispatcher.h"

@@ -27,3 +27,12 @@ g++ -I "${IMAGE_LIBRARY_PATH}include/" "${IMAGE_LIBRARY_PATH}applications/flipH.
 g++ -I "${IMAGE_LIBRARY_PATH}include/" "${IMAGE_LIBRARY_PATH}applications/flipV.cpp" "${IMAGE_LIBRARY_PATH}lib/StaticImageLib.a" -o flipV
 g++ -I "${IMAGE_LIBRARY_PATH}include/" "${IMAGE_LIBRARY_PATH}applications/gray.cpp" "${IMAGE_LIBRARY_PATH}lib/StaticImageLib.a" -o gray
 g++ -I "${IMAGE_LIBRARY_PATH}include/" "${IMAGE_LIBRARY_PATH}applications/rotate.cpp" "${IMAGE_LIBRARY_PATH}lib/StaticImageLib.a" -o rotate
+
+# build shared library
+
+#  build versions against static library
+
+# build version 1
+g++ ../Version1/main.cpp ../Version1/dispatcher.cpp ../Version1/job.cpp ../Version1/utility.cpp "${IMAGE_LIBRARY_PATH}lib/StaticImageLib.a"  -o v1
+
+
