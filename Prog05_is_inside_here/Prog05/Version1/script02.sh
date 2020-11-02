@@ -3,23 +3,25 @@
 DROP_FOLDER="$1"
 DATA_FOLDER="$2"
 OUTPUT_FOLDER="$3"
+PATH_TO_EXECS="./"
+PATH_TO_COMPLETED="../completed/"
 
 PATHS_ARE_SAME_ERROR_MSG="Error: All Paths Must Be Different!"
 
 # Ensure paths are different for passed directories
 if [[ DROP_FOLDER -ef DATA_FOLDER ]]; then 
-	echo $PATHS_ARE_SAME_ERROR_MSG
-	exit 1
+    echo $PATHS_ARE_SAME_ERROR_MSG
+    exit 1
 fi
 
 if [[ DROP_FOLDER -ef OUTPUT_FOLDER ]]; then 
-	echo $PATHS_ARE_SAME_ERROR_MSG
-	exit 1
+    echo $PATHS_ARE_SAME_ERROR_MSG
+    exit 1
 fi
 
 if [[ DATA_FOLDER -ef OUTPUT_FOLDER ]]; then 
-	echo $PATHS_ARE_SAME_ERROR_MSG
-	exit 1
+    echo $PATHS_ARE_SAME_ERROR_MSG
+    exit 1
 fi
 
 # create directories if they don't already exist
@@ -38,14 +40,21 @@ fi
 # watch drop folder
 inotifywait -m $DROP_FOLDER -e create -e moved_to |
     while read path action file; do
-    	# ends in .tga
+        # ends in .tga
         if [[ "$file" =~ .*tga$ ]]; then 
-        	# move to image dir
-            echo "txt file" 
+            # move to image dir
+
+            # get basename
+            baseFilename=$(basename -- $file)
+            mv $file "${DATA_FOLDER}/${baseFilename}" 
         fi
         # ends in .job
         if [[ "$file" =~ .*job$ ]]; then
-        	# send to dispatcher 
-            echo "txt file" 
+            # send to dispatcher 
+             baseFilename=$(basename -- $file)
+            ./v1 $file $DATA_FOLDER $OUTPUT_FOLDER $PATH_TO_EXECS
+
+            # move to completed 
+            mv $file "${PATH_TO_COMPLETED}/$baseFilename"
         fi
     done
