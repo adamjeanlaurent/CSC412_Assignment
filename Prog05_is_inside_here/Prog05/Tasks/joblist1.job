@@ -1,5 +1,0 @@
-flipH image123.tar
-flipV image123.tar
-gray image123.tar
-crop image123.tar 12 13 14 15
-rotate -llrlrl image123.tar

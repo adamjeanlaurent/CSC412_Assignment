@@ -3,7 +3,7 @@
 DROP_FOLDER="$1"
 DATA_FOLDER="$2"
 OUTPUT_FOLDER="$3"
-PATH_TO_EXECS="./"
+PATH_TO_EXECS="../Script/"
 PATH_TO_COMPLETED="../completed/"
 
 PATHS_ARE_SAME_ERROR_MSG="Error: All Paths Must Be Different!"
@@ -42,19 +42,18 @@ inotifywait -m $DROP_FOLDER -e create -e moved_to |
     while read path action file; do
         # ends in .tga
         if [[ "$file" =~ .*tga$ ]]; then 
+
             # move to image dir
 
             # get basename
-            baseFilename=$(basename -- $file)
-            mv $file "${DATA_FOLDER}/${baseFilename}" 
+            mv "../Tasks/${file}" "${DATA_FOLDER}/${file}" 
         fi
         # ends in .job
         if [[ "$file" =~ .*job$ ]]; then
             # send to dispatcher 
-             baseFilename=$(basename -- $file)
-            ./v1 $file $DATA_FOLDER $OUTPUT_FOLDER $PATH_TO_EXECS
+            ../Script/v1 "../Tasks/${file}" $DATA_FOLDER $OUTPUT_FOLDER $PATH_TO_EXECS
 
             # move to completed 
-            mv $file "${PATH_TO_COMPLETED}/$baseFilename"
+            mv "../Tasks/${file}" "${PATH_TO_COMPLETED}/${file}"
         fi
     done

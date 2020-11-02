@@ -77,6 +77,7 @@ void Utility::ExecFlipH(std::string fullImagePath, std::string fullExecPath)
             const_cast<char* const>(outputPath.c_str()),
             NULL
         };
+        std::cout << "hell world" << std::endl;
         execv(fullExecPath.c_str(), arguments);
 }
 
