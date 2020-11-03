@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "dispatcher.h"
+#include "job.h"
 
 int main(int argc, char** argv)
 {
@@ -16,6 +17,6 @@ int main(int argc, char** argv)
     }   
 
     ProcessJobFile(argv[1], argv[2], argv[3], argv[4]);
-    
+
     return 0;
 }

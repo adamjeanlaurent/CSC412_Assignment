@@ -11,7 +11,7 @@
 class Utility
 {
     public:
-        Utility(std::string outputDir, std::string imageDir, Job jobObj, std::string execDir);
+        Utility(std::string outputDir, std::string imageDir, Job jobObj, std::string execDir, std::string execNamePlaceholder);
 
         void RunTask();
 

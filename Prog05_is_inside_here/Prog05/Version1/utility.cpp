@@ -13,6 +13,7 @@ Utility::Utility(std::string outputDir, std::string imageDir, Job jobObj, std::s
     imagePath = imageDir;
     job = jobObj;
     execPath = execDir;
+    execNamePlaceholder = "placeholder";
 }
 
 void Utility::RunTask()
@@ -55,7 +56,8 @@ void Utility::ExecCrop(std::string fullImagePath, std::string fullExecPath)
     // reason for const_cast
     // https://stackoverflow.com/questions/190184/execv-and-const-ness
     char* const arguments[] = 
-    { 
+    {
+        const_cast<char* const>(execNamePlaceholder), 
         const_cast<char* const>(fullImagePath.c_str()), 
         const_cast<char* const>(outputPath.c_str()), 
         const_cast<char* const>(x_char), 
@@ -73,11 +75,12 @@ void Utility::ExecFlipH(std::string fullImagePath, std::string fullExecPath)
 {
         char* const arguments[] = 
         {
+            const_cast<char* const>(execNamePlaceholder), 
             const_cast<char* const>(fullImagePath.c_str()),
             const_cast<char* const>(outputPath.c_str()),
             NULL
         };
-        std::cout << "hell world" << std::endl;
+
         execv(fullExecPath.c_str(), arguments);
 }
 
@@ -85,6 +88,7 @@ void Utility::ExecFlipV(std::string fullImagePath, std::string fullExecPath)
 {
     char* const arguments[] = 
     {
+        const_cast<char* const>(execNamePlaceholder), 
         const_cast<char* const>(fullImagePath.c_str()),
         const_cast<char* const>(outputPath.c_str()),
         NULL
@@ -96,6 +100,7 @@ void Utility::ExecGray(std::string fullImagePath, std::string fullExecPath)
 {
     char* const arguments[] = 
     {
+        const_cast<char* const>(execNamePlaceholder), 
         const_cast<char* const>(fullImagePath.c_str()),
         const_cast<char* const>(outputPath.c_str()),
         NULL
@@ -107,6 +112,7 @@ void Utility::ExecRotate(std::string fullImagePath, std::string fullExecPath)
 {
     char* const arguments[] = 
     {
+        const_cast<char* const>(execNamePlaceholder), 
         const_cast<char* const>(job.rotation.c_str()),
         const_cast<char* const>(fullImagePath.c_str()),
         const_cast<char* const>(outputPath.c_str()),
@@ -117,11 +123,17 @@ void Utility::ExecRotate(std::string fullImagePath, std::string fullExecPath)
 
 std::string Utility::CombinePathWithFile(std::string path, std::string filename) 
 {
-    int len = filename.length() - 1;
-    bool hasSlash = ( filename[len] == '/');
+    int len = path.length() - 1;
+    bool hasSlash;
+
+    if(path[len] == '/')
+        hasSlash = true;
+    else
+        hasSlash = false;
+    
     std::string combinedStr = path;
 
-    if(!hasSlash)
+    if(hasSlash == false)
     {
         combinedStr = combinedStr + '/';
     }

@@ -23,9 +23,6 @@ void ProcessJobFile(char* jobPath, char* imagesPath, char* outputPath, char* exe
 
     std::vector<pid_t> processIds;
 
-    PrintJobList(jobList);
-    std::cout << "len: " << jobList.size() << std::endl;
-
     for(Job job : jobList)
     {
         // break if end found
