@@ -21,6 +21,8 @@ void ProcessJobFile(char* jobPath, char* imagesPath, char* outputPath, char* exe
     // read job file
     std::vector<Job> jobList = GetJobList(jobFilePath);
 
+    PrintJobList(jobList);
+
     std::vector<pid_t> processIds;
 
     for(Job job : jobList)

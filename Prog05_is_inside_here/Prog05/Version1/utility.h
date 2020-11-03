@@ -11,7 +11,7 @@
 class Utility
 {
     public:
-        Utility(std::string outputDir, std::string imageDir, Job jobObj, std::string execDir, std::string execNamePlaceholder);
+        Utility(std::string outputDir, std::string imageDir, Job jobObj, std::string execDir);
 
         void RunTask();
 
@@ -20,6 +20,7 @@ class Utility
         std::string imagePath;
         Job job;
         std::string execPath;
+        std::string execNamePlaceholder;
 
         void ExecCrop(std::string fullImagePath, std::string fullExecPath);
         void ExecFlipH(std::string fullImagePath, std::string fullExecPath);

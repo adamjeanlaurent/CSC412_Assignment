@@ -112,6 +112,8 @@ int main(int argc, const char* argv[])
 		cout << "Proper usage: crop inputImagePath outFolderPath x y width height" << endl;
 		return WRONG_NUMBER_OF_ARGUMENTS;
 	}
+
+	std::cout << "imagepath: " << argv[1] << " outputPath: " << argv[2] << " x: " << argv[3] << " y: " << argv[4] << " width: " << argv[5] << " height: " << argv[6] << std::endl;
 	
 	//	Just to look prettier in the code, I give meaningful names to my arguments
 	const char* inputImagePath = argv[1];

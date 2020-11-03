@@ -2,6 +2,7 @@
 
 std::vector<Job> GetJobList(std::string jobFilePath)
 {
+    std::cout << "path: " << jobFilePath << std::endl;
     FILE *fp = fopen(jobFilePath.c_str(), "r");
 
     std::vector<Job> jobList;
@@ -11,10 +12,11 @@ std::vector<Job> GetJobList(std::string jobFilePath)
         char command[20];
         char rotation[10];
         char filename[500];
-    
+        std::cout << "Fp not null" << std::endl;
         // loop through enture job file
         while (fscanf(fp, "%s", command) == 1)
         {
+            std::cout << "command found: " << command << std::endl;
             Job job;
 
             // flipH command
@@ -79,6 +81,11 @@ std::string TaskEnumToString(Task task)
 
 void PrintJobList(std::vector<Job> jobList)
 {
+    if(jobList.size() == 0)
+    {
+        std::cout << "Job List Is Empty! :(" << std::endl;
+    }
+
     for (Job job : jobList)
     {
         switch (job.task)

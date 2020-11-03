@@ -1,0 +1,6 @@
+flipH bottles.tga
+flipV bottles.tga
+gray bottles.tga
+crop bottles.tga 100 110 120 130
+rotate -l bottles.tga
+end

@@ -3,7 +3,7 @@
 DROP_FOLDER="$1"
 DATA_FOLDER="$2"
 OUTPUT_FOLDER="$3"
-PATH_TO_EXECS="../Script/"
+PATH_TO_EXECS="./"
 PATH_TO_COMPLETED="../completed/"
 
 PATHS_ARE_SAME_ERROR_MSG="Error: All Paths Must Be Different!"
@@ -51,9 +51,9 @@ inotifywait -m $DROP_FOLDER -e create -e moved_to |
         # ends in .job
         if [[ "$file" =~ .*job$ ]]; then
             # send to dispatcher 
-            ../Script/v1 "../Tasks/${file}" $DATA_FOLDER $OUTPUT_FOLDER $PATH_TO_EXECS
+            ../Script/v1 "${DROP_FOLDER}${file}" $DATA_FOLDER $OUTPUT_FOLDER $PATH_TO_EXECS
 
             # move to completed 
-            mv "../Tasks/${file}" "${PATH_TO_COMPLETED}/${file}"
+            mv "${DROP_FOLDER}${file}" "${PATH_TO_COMPLETED}/${file}"
         fi
     done

@@ -48,22 +48,22 @@ void Utility::RunTask()
 void Utility::ExecCrop(std::string fullImagePath, std::string fullExecPath)
 {
     // convert numbers to strings
-    const char* x_char = std::to_string(job.x).c_str();
-    const char* y_char = std::to_string(job.y).c_str();
-    const char* w_char = std::to_string(job.w).c_str();
-    const char* h_char = std::to_string(job.h).c_str();
+    std::string x_string = std::to_string(job.x);
+    std::string y_string = std::to_string(job.y);
+    std::string w_string = std::to_string(job.w);
+    std::string h_string = std::to_string(job.h);
     
     // reason for const_cast
     // https://stackoverflow.com/questions/190184/execv-and-const-ness
     char* const arguments[] = 
     {
-        const_cast<char* const>(execNamePlaceholder), 
+        const_cast<char* const>(execNamePlaceholder.c_str()), 
         const_cast<char* const>(fullImagePath.c_str()), 
         const_cast<char* const>(outputPath.c_str()), 
-        const_cast<char* const>(x_char), 
-        const_cast<char* const>(y_char), 
-        const_cast<char* const>(w_char), 
-        const_cast<char* const>(h_char), 
+        const_cast<char* const>(x_string.c_str()), 
+        const_cast<char* const>(y_string.c_str()), 
+        const_cast<char* const>(w_string.c_str()), 
+        const_cast<char* const>(h_string.c_str()), 
         NULL
     };
 
@@ -75,7 +75,7 @@ void Utility::ExecFlipH(std::string fullImagePath, std::string fullExecPath)
 {
         char* const arguments[] = 
         {
-            const_cast<char* const>(execNamePlaceholder), 
+            const_cast<char* const>(execNamePlaceholder.c_str()), 
             const_cast<char* const>(fullImagePath.c_str()),
             const_cast<char* const>(outputPath.c_str()),
             NULL
@@ -88,7 +88,7 @@ void Utility::ExecFlipV(std::string fullImagePath, std::string fullExecPath)
 {
     char* const arguments[] = 
     {
-        const_cast<char* const>(execNamePlaceholder), 
+        const_cast<char* const>(execNamePlaceholder.c_str()), 
         const_cast<char* const>(fullImagePath.c_str()),
         const_cast<char* const>(outputPath.c_str()),
         NULL
@@ -100,7 +100,7 @@ void Utility::ExecGray(std::string fullImagePath, std::string fullExecPath)
 {
     char* const arguments[] = 
     {
-        const_cast<char* const>(execNamePlaceholder), 
+        const_cast<char* const>(execNamePlaceholder.c_str()), 
         const_cast<char* const>(fullImagePath.c_str()),
         const_cast<char* const>(outputPath.c_str()),
         NULL
@@ -112,7 +112,7 @@ void Utility::ExecRotate(std::string fullImagePath, std::string fullExecPath)
 {
     char* const arguments[] = 
     {
-        const_cast<char* const>(execNamePlaceholder), 
+        const_cast<char* const>(execNamePlaceholder.c_str()), 
         const_cast<char* const>(job.rotation.c_str()),
         const_cast<char* const>(fullImagePath.c_str()),
         const_cast<char* const>(outputPath.c_str()),
