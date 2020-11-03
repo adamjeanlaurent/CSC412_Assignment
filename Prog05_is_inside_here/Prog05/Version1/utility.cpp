@@ -47,6 +47,7 @@ void Utility::RunTask()
 
 void Utility::ExecCrop(std::string fullImagePath, std::string fullExecPath)
 {
+    execNamePlaceholder = "./crop";
     // convert numbers to strings
     std::string x_string = std::to_string(job.x);
     std::string y_string = std::to_string(job.y);
@@ -73,6 +74,7 @@ void Utility::ExecCrop(std::string fullImagePath, std::string fullExecPath)
 
 void Utility::ExecFlipH(std::string fullImagePath, std::string fullExecPath)
 {
+        execNamePlaceholder = "./flipH";
         char* const arguments[] = 
         {
             const_cast<char* const>(execNamePlaceholder.c_str()), 
@@ -86,6 +88,7 @@ void Utility::ExecFlipH(std::string fullImagePath, std::string fullExecPath)
 
 void Utility::ExecFlipV(std::string fullImagePath, std::string fullExecPath)
 {
+    execNamePlaceholder = "./flipV";
     char* const arguments[] = 
     {
         const_cast<char* const>(execNamePlaceholder.c_str()), 
@@ -98,6 +101,7 @@ void Utility::ExecFlipV(std::string fullImagePath, std::string fullExecPath)
 
 void Utility::ExecGray(std::string fullImagePath, std::string fullExecPath)
 {
+    execNamePlaceholder = "./gray";
     char* const arguments[] = 
     {
         const_cast<char* const>(execNamePlaceholder.c_str()), 
@@ -110,6 +114,7 @@ void Utility::ExecGray(std::string fullImagePath, std::string fullExecPath)
 
 void Utility::ExecRotate(std::string fullImagePath, std::string fullExecPath)
 {
+    execNamePlaceholder = "./rotate";
     char* const arguments[] = 
     {
         const_cast<char* const>(execNamePlaceholder.c_str()), 

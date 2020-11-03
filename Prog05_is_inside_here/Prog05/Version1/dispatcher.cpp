@@ -17,7 +17,7 @@ void ProcessJobFile(char* jobPath, char* imagesPath, char* outputPath, char* exe
     std::string pathToImages(imagesPath);
     std::string pathToOutput(outputPath);
     std::string pathToExecs(execPath);
-
+    
     // read job file
     std::vector<Job> jobList = GetJobList(jobFilePath);
 
