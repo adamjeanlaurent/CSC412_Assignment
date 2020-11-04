@@ -37,6 +37,25 @@ if [ ! -d "$DROP_FOLDER" ]; then
     mkdir $DROP_FOLDER
 fi
 
+# add / to end of paths if they don't have one
+LAST_CHAR_OF_DROP_PATH="${DROP_FOLDER: -1}"
+
+if [ "$LAST_CHAR_OF_DROP_PATH" != "/" ] ; then
+    DROP_FOLDER="${DROP_FOLDER}/"
+fi
+
+LAST_CHAR_OF_DATA_PATH="${DATA_FOLDER: -1}"
+
+if [ "$LAST_CHAR_OF_DATA_PATH" != "/" ] ; then
+    DATA_FOLDER="${DATA_FOLDER}/"
+fi
+
+LAST_CHAR_OUTPUT_PATH="${OUTPUT_FOLDER: -1}"
+
+if [ "$LAST_CHAR_OUTPUT_PATH" != "/" ] ; then
+    OUTPUT_FOLDER="${OUTPUT_FOLDER}/"
+fi
+
 # watch drop folder
 inotifywait -m $DROP_FOLDER -e create -e moved_to |
     while read path action file; do
@@ -44,9 +63,7 @@ inotifywait -m $DROP_FOLDER -e create -e moved_to |
         if [[ "$file" =~ .*tga$ ]]; then 
 
             # move to image dir
-
-            # get basename
-            mv "../Tasks/${file}" "${DATA_FOLDER}/${file}" 
+            mv "${DROP_FOLDER}${file}" "${DATA_FOLDER}${file}" 
         fi
         # ends in .job
         if [[ "$file" =~ .*job$ ]]; then
@@ -54,6 +71,6 @@ inotifywait -m $DROP_FOLDER -e create -e moved_to |
             ../Script/v1 "${DROP_FOLDER}${file}" $DATA_FOLDER $OUTPUT_FOLDER $PATH_TO_EXECS
 
             # move to completed 
-            mv "${DROP_FOLDER}${file}" "${PATH_TO_COMPLETED}/${file}"
+            mv "${DROP_FOLDER}${file}" "${PATH_TO_COMPLETED}${file}"
         fi
     done
