@@ -68,7 +68,6 @@ void Utility::ExecCrop(std::string fullImagePath, std::string fullExecPath)
         NULL
     };
 
-    // build exec path
     execv(fullExecPath.c_str(), arguments);
 }
 
