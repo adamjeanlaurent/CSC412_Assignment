@@ -7,8 +7,10 @@ if [[ ! -p $pipe ]]; then
     exit 1
 fi
 
-if [[ "$1" ]]; then
-    echo "$1" >$pipe
-else
-    echo "Hello from $$" >$pipe
-fi
+SIZEE=500
+
+# echo ${#SIZEE} >$pipe
+# echo $SIZEE >$pipe
+
+echo "HELLOworld.job" > $pipe
+echo "goodbye.job" > $pipe

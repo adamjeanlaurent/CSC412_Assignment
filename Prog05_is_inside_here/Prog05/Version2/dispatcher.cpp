@@ -11,8 +11,10 @@
 #include "utility.h"
 #include "dispatcher.h"
 
-void ProcessJobFile(char* jobPath, char* imagesPath, char* outputPath, char* execPath)
+bool ProcessJobFile(char* jobPath, char* imagesPath, char* outputPath, char* execPath)
 {
+    bool endFound = false;
+
     std::string jobFilePath(jobPath);
     std::string pathToImages(imagesPath);
     std::string pathToOutput(outputPath);
@@ -28,6 +30,7 @@ void ProcessJobFile(char* jobPath, char* imagesPath, char* outputPath, char* exe
         // break if end found
         if(job.task == end)
         {
+            endFound = true;
             break;
         }
 
@@ -51,4 +54,6 @@ void ProcessJobFile(char* jobPath, char* imagesPath, char* outputPath, char* exe
     {
         waitpid(pid, &status, 0);
     }
+
+    return endFound;
 }
