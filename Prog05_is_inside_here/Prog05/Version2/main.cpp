@@ -20,9 +20,11 @@ int main(int argc, char** argv)
         return 0;
     }
 
-    char doneMessage[5] = "done";
-
+    char doneMessage[10] = "quit\n";
+    char continueMessage[10] = "continue\n";
     int fd;
+    char jobFilePath[500];
+    bool endFound = false;
 
     // get pipe name
     char* myfifo = argv[4];
@@ -30,10 +32,6 @@ int main(int argc, char** argv)
     // create named pipe
     mkfifo(myfifo, 0666);
 
-    char jobFilePath[500];
-
-    bool endFound = false;
-    
     while(!endFound)
     {
         // open pipe
@@ -42,14 +40,32 @@ int main(int argc, char** argv)
         // read job file path
         read(fd, jobFilePath, 500);
 
+        // remove newline from file path
+        jobFilePath[strcspn(jobFilePath, "\n")] = 0;
+
         // process file
         endFound = ProcessJobFile(jobFilePath, argv[1], argv[2], argv[3]);
         
         // close pipe
         close(fd);
+
+        if(endFound)
+        {
+            break;
+        }
+
+        else
+        {
+            // write continue result
+            fd = open(myfifo, O_WRONLY);
+            write(fd, continueMessage, strlen(continueMessage) + 1);
+
+            // close pipe
+            close(fd);   
+        }
     }
 
-    // report to bash script
+    // write done result
     fd = open(myfifo, O_WRONLY);
     write(fd, doneMessage, strlen(doneMessage) + 1);
     close(fd);

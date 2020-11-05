@@ -59,6 +59,9 @@ fi
 # create pipe
 pipe=/tmp/myfifo
 
+# start dispatcher 
+../Script/v1 $DATA_FOLDER $OUTPUT_FOLDER $PATH_TO_EXECS "${pipe}"
+
 # watch drop folder
 inotifywait -m $DROP_FOLDER -e create -e moved_to |
     while read path action file; do
@@ -68,15 +71,27 @@ inotifywait -m $DROP_FOLDER -e create -e moved_to |
             # move to image dir
             mv "${DROP_FOLDER}${file}" "${DATA_FOLDER}${file}" 
         fi
+
         # ends in .job
         if [[ "$file" =~ .*job$ ]]; then
             # pipe to dispatcher 
-            echo "${DROP_FOLDER}" > $pipe
+            echo "${DROP_FOLDER}${file}" > $pipe
 
-            # ../Script/v1 "${DROP_FOLDER}${file}" $DATA_FOLDER $OUTPUT_FOLDER $PATH_TO_EXECS
+            # wait for result from pipe
+            if read line <$pipe; then
+                # check for quit result
+                if [[ "$line" == 'quit' ]]; then
+                    # move job file to completed
+                    mv "${DROP_FOLDER}${file}" "${PATH_TO_COMPLETED}${file}"
+                    # exit
+                    exit 1
+                fi
 
-
-            # move to completed 
-            mv "${DROP_FOLDER}${file}" "${PATH_TO_COMPLETED}${file}"
+                # check for continue result
+                if [[ "$line" == 'continue' ]]; then
+                    # move job file to completed
+                    mv "${DROP_FOLDER}${file}" "${PATH_TO_COMPLETED}${file}"
+                fi
+            fi
         fi
     done
