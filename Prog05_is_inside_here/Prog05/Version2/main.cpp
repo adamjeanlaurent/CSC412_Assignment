@@ -19,7 +19,7 @@ int main(int argc, char** argv)
         std::cout << "usage: " << argv[0] << "./v1 <pathToImages> <pathToOutput> <pathToExecs> <nameOfPipe>" << std::endl;
         return 0;
     }
-
+    
     char doneMessage[10] = "quit\n";
     char continueMessage[10] = "continue\n";
     int fd;
