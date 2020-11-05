@@ -30,22 +30,20 @@ int main(int argc, char** argv)
     // create named pipe
     mkfifo(myfifo, 0666);
 
-    char jobFilenameBuffer[500];
+    char jobFilePath[500];
 
     bool endFound = false;
-    int lengthOfFilepath = 0;
     
     while(!endFound)
     {
+        // open pipe
         fd = open(myfifo, O_RDONLY);
 
-        // read length of filename
-        read(fd, &lengthOfFilepath, 4);
+        // read job file path
+        read(fd, jobFilePath, 500);
 
-        // read file name
-        read(fd, jobFilenameBuffer, lengthOfFilepath);
-
-        endFound = ProcessJobFile(jobFilenameBuffer, argv[1], argv[2], argv[3]);
+        // process file
+        endFound = ProcessJobFile(jobFilePath, argv[1], argv[2], argv[3]);
         
         // close pipe
         close(fd);

@@ -2,15 +2,17 @@
 
 pipe=/tmp/myfifo
 
+# create pipe if it doesn't exist
+
 if [[ ! -p $pipe ]]; then
-    echo "Reader not running"
-    exit 1
+    mkfifo $pipe
 fi
 
-SIZEE=500
+# if read line <$pipe; then
+#     echo "$line"
+# fi
+echo "hello world from bash" >$pipe
 
-# echo ${#SIZEE} >$pipe
-# echo $SIZEE >$pipe
+# echo "Hello from bash script" >$pipe
 
-echo "HELLOworld.job" > $pipe
-echo "goodbye.job" > $pipe
+echo "done writing"

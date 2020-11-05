@@ -7,9 +7,10 @@
 #include <sys/stat.h> 
 #include <sys/types.h> 
 #include <unistd.h>
+#include <iostream>
 
-int main() 
-{ 
+void ReadPipe() 
+{
     int fd1; 
   
     // FIFO file path 
@@ -25,10 +26,34 @@ int main()
     fd1 = open(myfifo,O_RDONLY); 
     read(fd1, s1, 50); 
 
+    s1[strcspn(s1, "\n")] = 0;
     // Print the read string and close 
     printf("num: %s\n", s1); 
     printf("len: %lu\n", strlen(s1));
     close(fd1); 
     
-    return 0; 
+}
+
+void WritePipe()
+{
+    int fd1; 
+  
+    char * myfifo = "/tmp/myfifo"; 
+  
+    mkfifo(myfifo, 0666); 
+    char s1[50] = "Hello From C++ Program\n";
+
+    fd1 = open(myfifo, O_WRONLY); 
+    
+    write(fd1, s1, strlen(s1) + 1);
+
+    
+    close(fd1);
+}
+
+
+int main() 
+{
+    ReadPipe();
+    return 0;  
 } 
