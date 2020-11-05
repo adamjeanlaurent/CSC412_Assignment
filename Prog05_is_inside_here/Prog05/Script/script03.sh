@@ -71,7 +71,7 @@ inotifywait -m $DROP_FOLDER -e create -e moved_to |
             # move to image dir
             mv "${DROP_FOLDER}${file}" "${DATA_FOLDER}${file}" 
         fi
-
+        
         # ends in .job
         if [[ "$file" =~ .*job$ ]]; then
             # pipe to dispatcher 

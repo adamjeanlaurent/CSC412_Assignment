@@ -49,26 +49,24 @@ int main(int argc, char** argv)
         // close pipe
         close(fd);
 
+        char* result;
+
         if(endFound)
         {
-            break;
+           result = doneMessage;
         }
-
         else
         {
-            // write continue result
-            fd = open(myfifo, O_WRONLY);
-            write(fd, continueMessage, strlen(continueMessage) + 1);
-
-            // close pipe
-            close(fd);   
+            result = continueMessage;
         }
-    }
+        
+        // write result to pipe
+        fd = open(myfifo, O_WRONLY);
+        write(fd, result, strlen(result) + 1);
 
-    // write done result
-    fd = open(myfifo, O_WRONLY);
-    write(fd, doneMessage, strlen(doneMessage) + 1);
-    close(fd);
+        // close pipe
+        close(fd);   
+    }
 
     return 0;
 }
