@@ -57,10 +57,11 @@ if [ "$LAST_CHAR_OUTPUT_PATH" != "/" ] ; then
 fi
 
 # create pipe
-pipe=/tmp/myfifo
+read_pipe=/tmp/c_to_bash
+write_pipe=/tmp/bash_to_c
 
 # start dispatcher 
-../Script/v1 $DATA_FOLDER $OUTPUT_FOLDER $PATH_TO_EXECS "${pipe}"
+./tmp/v2 $DATA_FOLDER $OUTPUT_FOLDER $PATH_TO_EXECS "${write_pipe}" "${read_pipe}"
 
 # watch drop folder
 inotifywait -m $DROP_FOLDER -e create -e moved_to |
@@ -75,10 +76,10 @@ inotifywait -m $DROP_FOLDER -e create -e moved_to |
         # ends in .job
         if [[ "$file" =~ .*job$ ]]; then
             # pipe to dispatcher 
-            echo "${DROP_FOLDER}${file}" > $pipe
+            echo "${DROP_FOLDER}${file}" > $write_pipe
 
             # wait for result from pipe
-            if read line <$pipe; then
+            if read line <$read_pipe; then
                 # check for quit result
                 if [[ "$line" == 'quit' ]]; then
                     # move job file to completed

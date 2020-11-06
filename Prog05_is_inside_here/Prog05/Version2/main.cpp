@@ -13,32 +13,36 @@
 int main(int argc, char** argv)
 {
     // parse input arguments
-    if(argc != 5)
+    if(argc != 6)
     {
         // invalid arguments
-        std::cout << "usage: " << argv[0] << "./v1 <pathToImages> <pathToOutput> <pathToExecs> <nameOfPipe>" << std::endl;
+        std::cout << "usage: " << argv[0] << "./v1 <pathToImages> <pathToOutput> <pathToExecs> <nameOfPipe1> <nameOfPipe2>" << std::endl;
         return 0;
     }
     
     char doneMessage[10] = "quit\n";
     char continueMessage[10] = "continue\n";
-    int fd;
+    int readFD;
+    int writeFD;
+    
     char jobFilePath[500];
     bool endFound = false;
 
     // get pipe name
-    char* myfifo = argv[4];
+    char* readPipe = argv[4];
+    char* writePipe = argv[5];
 
-    // create named pipe
-    mkfifo(myfifo, 0666);
+    // create named pipes
+    mkfifo(readPipe, 0666);
+    mkfifo(writePipe, 0666);
 
     while(!endFound)
     {
         // open pipe
-        fd = open(myfifo, O_RDONLY);
+        readFD = open(readPipe, O_RDONLY);
 
         // read job file path
-        read(fd, jobFilePath, 500);
+        read(readFD, jobFilePath, 500);
 
         // remove newline from file path
         jobFilePath[strcspn(jobFilePath, "\n")] = 0;
@@ -47,7 +51,7 @@ int main(int argc, char** argv)
         endFound = ProcessJobFile(jobFilePath, argv[1], argv[2], argv[3]);
         
         // close pipe
-        close(fd);
+        close(readFD);
         
         char* result;
 
@@ -61,11 +65,11 @@ int main(int argc, char** argv)
         }
         
         // write result to pipe
-        fd = open(myfifo, O_WRONLY);
-        write(fd, result, strlen(result) + 1);
+        writeFD = open(writePipe, O_WRONLY);
+        write(writeFD, result, strlen(result) + 1);
 
         // close pipe
-        close(fd);   
+        close(writeFD);   
     }
 
     return 0;

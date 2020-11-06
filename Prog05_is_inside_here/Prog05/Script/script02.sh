@@ -68,7 +68,7 @@ inotifywait -m $DROP_FOLDER -e create -e moved_to |
         # ends in .job
         if [[ "$file" =~ .*job$ ]]; then
             # send to dispatcher 
-            ../Script/v1 "${DROP_FOLDER}${file}" $DATA_FOLDER $OUTPUT_FOLDER $PATH_TO_EXECS
+            ./tmp/v1 "${DROP_FOLDER}${file}" $DATA_FOLDER $OUTPUT_FOLDER $PATH_TO_EXECS
 
             # move to completed 
             mv "${DROP_FOLDER}${file}" "${PATH_TO_COMPLETED}${file}"
