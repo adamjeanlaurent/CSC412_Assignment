@@ -31,4 +31,5 @@ g++ -I "${IMAGE_LIBRARY_PATH}include/" "${IMAGE_LIBRARY_PATH}applications/rotate
 # build version 1 against static library
 g++ ../Version1/main.cpp ../Version1/dispatcher.cpp ../Version1/job.cpp ../Version1/utility.cpp "${IMAGE_LIBRARY_PATH}lib/StaticImageLib.a"  -o v1
 
-
+# build version 2 against static library
+g++ ../Version2/main.cpp ../Version2/dispatcher.cpp ../Version2/job.cpp ../Version2/utility.cpp "${IMAGE_LIBRARY_PATH}lib/StaticImageLib.a"  -o v2
