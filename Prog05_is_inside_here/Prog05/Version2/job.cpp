@@ -62,6 +62,12 @@ std::vector<Job> GetJobList(std::string jobFilePath)
             job.imageFilename = std::string(filename); // convert char* file name to std::string
 
             jobList.push_back(job);
+
+            // if end found stop reading
+            if(job.task == end)
+            {
+                break;
+            }
         }
         fclose(fp);
     }

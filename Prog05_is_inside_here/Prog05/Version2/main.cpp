@@ -48,7 +48,7 @@ int main(int argc, char** argv)
         
         // close pipe
         close(fd);
-
+        
         char* result;
 
         if(endFound)
