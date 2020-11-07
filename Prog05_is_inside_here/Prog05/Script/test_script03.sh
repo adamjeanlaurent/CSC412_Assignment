@@ -29,6 +29,10 @@ if [ ! -d "$OUTPUT_FOLDER" ]; then
     mkdir $OUTPUT_FOLDER
 fi
 
+if [ ! -d "$PATH_TO_COMPLETED" ]; then
+    mkdir $PATH_TO_COMPLETED
+fi
+
 if [ ! -d "$DATA_FOLDER" ]; then
     mkdir $DATA_FOLDER
 fi

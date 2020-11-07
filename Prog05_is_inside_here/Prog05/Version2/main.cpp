@@ -69,7 +69,7 @@ int main(int argc, char** argv)
         write(writeFD, result, strlen(result) + 1);
 
         // close pipe
-        close(writeFD);   
+        close(writeFD);
     }
 
     return 0;
