@@ -3,7 +3,7 @@
 DROP_FOLDER="$1"
 DATA_FOLDER="$2"
 OUTPUT_FOLDER="$3"
-PATH_TO_EXECS="./"
+PATH_TO_EXECS="./tmp/"
 PATH_TO_COMPLETED="../completed/"
 
 PATHS_ARE_SAME_ERROR_MSG="Error: All Paths Must Be Different!"
@@ -56,12 +56,20 @@ if [ "$LAST_CHAR_OUTPUT_PATH" != "/" ] ; then
     OUTPUT_FOLDER="${OUTPUT_FOLDER}/"
 fi
 
-# create pipe
+# create pipes
 read_pipe=/tmp/c_to_bash
 write_pipe=/tmp/bash_to_c
 
+if [[ ! -p $read_pipe ]]; then
+    mkfifo $read_pipe
+fi
+
+if [[ ! -p $write_pipe ]]; then
+    mkfifo $write_pipe
+fi
+
 # start dispatcher 
-./tmp/v2 $DATA_FOLDER $OUTPUT_FOLDER $PATH_TO_EXECS "${write_pipe}" "${read_pipe}"
+./tmp/v2 $DATA_FOLDER $OUTPUT_FOLDER $PATH_TO_EXECS "${write_pipe}" "${read_pipe}" &
 
 # watch drop folder
 inotifywait -m $DROP_FOLDER -e create -e moved_to |
@@ -80,6 +88,7 @@ inotifywait -m $DROP_FOLDER -e create -e moved_to |
 
             # wait for result from pipe
             if read line <$read_pipe; then
+                echo $line
                 # check for quit result
                 if [[ "$line" == 'quit' ]]; then
                     # move job file to completed
