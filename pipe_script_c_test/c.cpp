@@ -55,5 +55,7 @@ void WritePipe()
 int main() 
 {
     ReadPipe();
+    ReadPipe();
+    ReadPipe();
     return 0;  
 } 

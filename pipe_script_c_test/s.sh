@@ -12,6 +12,8 @@ fi
 #     echo "$line"
 # fi
 echo "hello world from bash" >$pipe
+echo "goodbye world from bash" >$pipe
+echo "wassup world from bash" >$pipe
 
 # echo "Hello from bash script" >$pipe
 
