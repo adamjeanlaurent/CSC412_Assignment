@@ -31,7 +31,7 @@ bool ProcessJobFile(char* jobPath, char* imagesPath, char* outputPath, char* exe
         if(job.task == end)
         {
             endFound = true;
-            break;
+            break; 
         }
 
         pid_t id = fork();

@@ -9,6 +9,7 @@
 
 #include "dispatcher.h"
 #include "job.h"
+#include "pipe.h"
 
 /*
     Job of main dispatcher:
@@ -44,57 +45,20 @@ int main(int argc, char** argv)
         return 0;
     }
     
-    char doneMessage[10] = "quit\n";
-    char continueMessage[10] = "continue\n";
-    int readFD;
-    int writeFD;
-    
-    char jobFilePath[500];
-    bool endFound = false;
-
-    // get pipe name
-    char* readPipe = argv[4];
-    char* writePipe = argv[5];
-
-    // create named pipes
-    mkfifo(readPipe, 0666);
-    mkfifo(writePipe, 0666);
-
-    while(!endFound)
-    {
-        // open pipe
-        readFD = open(readPipe, O_RDONLY);
-
-        // read job file path
-        read(readFD, jobFilePath, 500);
-
-        // remove newline from file path
-        jobFilePath[strcspn(jobFilePath, "\n")] = 0;
-
-        // process file
-        endFound = ProcessJobFile(jobFilePath, argv[1], argv[2], argv[3]);
-        
-        // close pipe
-        close(readFD);
-        
-        char* result;
-
-        if(endFound)
-        {
-           result = doneMessage;
-        }
-        else
-        {
-            result = continueMessage;
-        }
-        
-        // write result to pipe
-        writeFD = open(writePipe, O_WRONLY);
-        write(writeFD, result, strlen(result) + 1);
-
-        // close pipe
-        close(writeFD);
-    }
+    // setup pipes
+    PipeManager pipes(
+        std::string(argv[4]), 
+        std::string(argv[5]), 
+        "tmp/read_fliph", 
+        "tmp/write_fliph", 
+        "tmp/read_flipv", 
+        "tmp/write_flipv", 
+        "tmp/read_gray", 
+        "tmp/write_gray", 
+        "tmp/read_crop", 
+        "tmp/write_crop", 
+        "tmp/read_rotate", 
+        "tmp/write_rotate");
 
     return 0;
 }
