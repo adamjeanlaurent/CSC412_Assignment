@@ -37,6 +37,14 @@ if [ ! -d "$DROP_FOLDER" ]; then
     mkdir $DROP_FOLDER
 fi
 
+if [ ! -d "$PATH_TO_COMPLETED" ]; then
+    mkdir $PATH_TO_COMPLETED
+fi
+
+if [ ! -d "$PATH_TO_EXECS" ]; then
+    mkdir $PATH_TO_EXECS
+fi
+
 # add / to end of paths if they don't have one
 LAST_CHAR_OF_DROP_PATH="${DROP_FOLDER: -1}"
 

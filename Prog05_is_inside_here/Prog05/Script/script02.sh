@@ -3,7 +3,7 @@
 DROP_FOLDER="$1"
 DATA_FOLDER="$2"
 OUTPUT_FOLDER="$3"
-PATH_TO_EXECS="./"
+PATH_TO_EXECS="./tmp"
 PATH_TO_COMPLETED="../completed/"
 
 PATHS_ARE_SAME_ERROR_MSG="Error: All Paths Must Be Different!"
@@ -35,6 +35,14 @@ fi
 
 if [ ! -d "$DROP_FOLDER" ]; then
     mkdir $DROP_FOLDER
+fi
+
+if [ ! -d "$PATH_TO_COMPLETED" ]; then
+    mkdir $PATH_TO_COMPLETED
+fi
+
+if [ ! -d "$PATH_TO_EXECS" ]; then
+    mkdir $PATH_TO_EXECS
 fi
 
 # add / to end of paths if they don't have one
