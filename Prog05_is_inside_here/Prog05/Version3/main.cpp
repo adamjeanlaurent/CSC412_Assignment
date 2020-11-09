@@ -49,20 +49,20 @@ int main(int argc, char** argv)
     PipeManager pipes(
         std::string(argv[4]), 
         std::string(argv[5]), 
-        "tmp/read_fliph", 
-        "tmp/write_fliph", 
-        "tmp/read_flipv", 
-        "tmp/write_flipv", 
-        "tmp/read_gray", 
+        "tmp/write_fliph",  
+        "tmp/write_flipv",  
         "tmp/write_gray", 
-        "tmp/read_crop", 
         "tmp/write_crop", 
-        "tmp/read_rotate", 
         "tmp/write_rotate");
 
-    std::string jobFilePath;
+    std::string jobFilePath; 
+    char doneMessage[10] = "quit";
+    char continueMessage[10] = "continue";
 
     bool endFound = false;
+
+    // launch resident dispatchers 
+    std::vector residentDispatchersProcessIds = LaunchResidentDispatchers(&pipes, std::string(argv[3]));
 
     while(!endFound)
     {
@@ -71,7 +71,26 @@ int main(int argc, char** argv)
 
         endFound = ProcessJobFileWithPipes(jobFilePath.c_str(), argv[1], argv[2], argv[3], &pipes);
 
+          char* result;
 
+        if(endFound)
+        {
+           result = doneMessage;
+        }
+        else
+        {
+            result = continueMessage;
+        }
+
+        // write result to bash
+        pipes.w_bash.Write(std::string(result));
+    }
+    
+    // wait for resident processes to end
+    int status = 0;
+    for(pid_t pid : residentDispatchersProcessIds)
+    {
+        waitpid(pid, &status, 0);
     }
 
     return 0;

@@ -49,4 +49,4 @@ void PrintJobList(std::vector<Job> jobList);
  */ 
 std::string TaskEnumToString(Task task);
 
-std::string JobToString(Job job);
+std::string JobToString(Job job, std::string outputPath, std::string dataFolderPath);

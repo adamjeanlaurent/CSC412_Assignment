@@ -13,3 +13,5 @@
 bool ProcessJobFile(char* jobPath, char* imagesPath, char* outputPath, char* execPath);
 
 bool ProcessJobFileWithPipes(const char* jobPath, char* imagesPath, char* outputPath, char* execPath, PipeManager* pipes);
+
+std::vector<pid_t> LaunchResidentDispatchers(PipeManager* pipes, std::string pathToExecs);

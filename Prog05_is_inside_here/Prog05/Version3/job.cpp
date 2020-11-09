@@ -1,4 +1,5 @@
 #include "job.h"
+#include "utility.h"
 
 std::vector<Job> GetJobList(std::string jobFilePath)
 {
@@ -130,28 +131,39 @@ void PrintJobList(std::vector<Job> jobList)
 // full path to tga file
 // full path to output
 // other are just numbers and rotations and stuff
-std::string JobToString(Job job)
+std::string JobToString(Job job, std::string outputPath, std::string dataFolderPath)
 {
     std::string str = "";
+
     switch(job.task)
     {
         case flipH:
-            str = 
+            str += CombinePathWithFile(outputPath, job.imageFilename) ;
+            str += " " + outputPath;
             break;
         case flipV:
-          
+            str += CombinePathWithFile(outputPath, job.imageFilename);
+            str += " " + outputPath;
             break;
          case gray:
-            
+            str += CombinePathWithFile(outputPath, job.imageFilename);
+            str += " " + outputPath;
             break;
          case crop:
-           
+            str += CombinePathWithFile(outputPath, job.imageFilename);
+            str += " " + outputPath;
+            str += " " + std::to_string(job.x);
+            str += " " + std::to_string(job.y);
+            str += " " + std::to_string(job.w);
+            str += " " + std::to_string(job.h);
             break;
          case rotate:
-           
+            str += CombinePathWithFile(outputPath, job.imageFilename);
+            str += " " + job.rotation;
+            str += " " + outputPath;
             break;
          case end:
-
+            str += "end";
             break;
     }
 }

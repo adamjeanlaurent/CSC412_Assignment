@@ -86,7 +86,7 @@ bool ProcessJobFileWithPipes(const char* jobPath, char* imagesPath, char* output
         if(id == 0)
         {
             // job data to string 
-            std::string jobString = JobToString(job);
+            std::string jobString = JobToString(job, outputPath, imagesPath);
             
             // do pipe stuff
             pipes->PipeMessage(job.task, jobString); 
@@ -103,6 +103,82 @@ bool ProcessJobFileWithPipes(const char* jobPath, char* imagesPath, char* output
     {
         waitpid(pid, &status, 0);
     }
+}
 
+// launch all resident dispatchers with name of the write pipes as args
+std::vector<pid_t> LaunchResidentDispatchers(PipeManager* pipes, std::string pathToExecs)
+{
+    std::string execName = "placeholder";
+    std::string execPath = CombinePathWithFile(pathToExecs, execName);
+
+    Task tasks[] = {crop, flipH, flipV, gray, rotate};
+
+    char* const cropArgs[] = 
+    {
+        const_cast<char* const>(execName.c_str()),
+        const_cast<char* const>(pipes->w_crop.pipe.c_str()),
+        NULL 
+    };
+
+    char* const flipHArgs[] = 
+    {
+        const_cast<char* const>(execName.c_str()),
+        const_cast<char* const>(pipes->w_flipH.pipe.c_str()),
+        NULL 
+    };
+
+    char* const flipVArgs[] = 
+    {
+        const_cast<char* const>(execName.c_str()),
+        const_cast<char* const>(pipes->w_flipV.pipe.c_str()),
+        NULL 
+    };
+
+    char* const grayArgs[] = 
+    {
+        const_cast<char* const>(execName.c_str()),
+        const_cast<char* const>(pipes->w_gray.pipe.c_str()),
+        NULL 
+    };
+
+    char* const rotateArgs[] = 
+    {
+        const_cast<char* const>(execName.c_str()),
+        const_cast<char* const>(pipes->w_rotate.pipe.c_str()),
+        NULL 
+    };
     
+    std::vector<pid_t> processIds;
+
+    for(Task task : tasks)
+    {
+        pid_t id = fork();
+
+        if(id == 0)
+        {
+            switch(task)
+            {
+                case crop: 
+                    execv(execPath.c_str(), cropArgs);
+                    break;
+                case flipH:
+                    execv(execPath.c_str(), flipHArgs);
+                    break;
+                case flipV:
+                    execv(execPath.c_str(), flipVArgs);
+                    break;
+                case gray:
+                    execv(execPath.c_str(), grayArgs);
+                    break;
+                case rotate:
+                    execv(execPath.c_str(), rotateArgs);
+                    break;
+            }
+        }
+        else
+        {
+            processIds.push_back(id);
+        }
+    }
+    return processIds;
 }

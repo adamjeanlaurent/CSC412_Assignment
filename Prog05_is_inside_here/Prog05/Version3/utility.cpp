@@ -41,7 +41,6 @@ void Utility::RunTask()
         default:
             break;
     }
-
     exit(0);
 }
 

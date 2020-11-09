@@ -99,4 +99,5 @@ void PipeManager::PipeMessage(Task task, std::string message)
             w_rotate.Write(message);
             break;
     }
+    exit(0);
 }
