@@ -125,3 +125,33 @@ void PrintJobList(std::vector<Job> jobList)
         }
     }
 }
+
+// what needs to be piped
+// full path to tga file
+// full path to output
+// other are just numbers and rotations and stuff
+std::string JobToString(Job job)
+{
+    std::string str = "";
+    switch(job.task)
+    {
+        case flipH:
+            str = 
+            break;
+        case flipV:
+          
+            break;
+         case gray:
+            
+            break;
+         case crop:
+           
+            break;
+         case rotate:
+           
+            break;
+         case end:
+
+            break;
+    }
+}

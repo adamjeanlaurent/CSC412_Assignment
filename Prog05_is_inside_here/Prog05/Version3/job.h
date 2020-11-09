@@ -48,3 +48,5 @@ void PrintJobList(std::vector<Job> jobList);
  * @return sting value of passed enum.
  */ 
 std::string TaskEnumToString(Task task);
+
+std::string JobToString(Job job);

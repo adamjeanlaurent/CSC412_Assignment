@@ -2,6 +2,7 @@
 
 #include <string>
 #include <iostream>
+#include "job.h"
 
 class Pipe
 {
@@ -33,6 +34,8 @@ class PipeManager
             std::string rp_rotate,
             std::string wp_rotate
         );
+
+        void PipeMessage(Task task, std::string message);
 
         // communcation with bash script
         Pipe r_bash;

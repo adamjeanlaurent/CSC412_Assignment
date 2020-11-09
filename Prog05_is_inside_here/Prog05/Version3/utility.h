@@ -80,12 +80,12 @@ class Utility
         * @return void.
         */ 
         void ExecRotate(std::string fullImagePath, std::string fullExecPath);
-
-        /**
-        * Summary: Combines a path with a filename. ex. path = usr/bin/ filename= hello.txt => result: usr/bin/hello.txt
-        * @param path: Full path to combine.
-        * @param filename: Filename to combine. 
-        * @return Combined string with filename and path. 
-        */ 
-        std::string CombinePathWithFile(std::string path, std::string filename);
 };
+
+/**
+* Summary: Combines a path with a filename. ex. path = usr/bin/ filename= hello.txt => result: usr/bin/hello.txt
+* @param path: Full path to combine.
+* @param filename: Filename to combine. 
+* @return Combined string with filename and path. 
+*/ 
+std::string CombinePathWithFile(std::string path, std::string filename);

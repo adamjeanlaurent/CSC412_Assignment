@@ -125,7 +125,7 @@ void Utility::ExecRotate(std::string fullImagePath, std::string fullExecPath)
     execv(fullExecPath.c_str(), arguments);
 }
 
-std::string Utility::CombinePathWithFile(std::string path, std::string filename) 
+std::string CombinePathWithFile(std::string path, std::string filename) 
 {
     int len = path.length() - 1;
     bool hasSlash;

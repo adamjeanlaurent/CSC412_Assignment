@@ -70,3 +70,33 @@ PipeManager::PipeManager(
     r_rotate = Pipe(0, rp_rotate);
     w_rotate = Pipe(0, wp_rotate);
 }
+
+void PipeManager::PipeMessage(Task task, std::string message)
+{
+    switch(task)
+    {
+        case flipH:
+            w_flipH.Write(message);
+            break;
+        case flipV:
+            w_flipV.Write(message);
+            break;
+         case gray:
+            w_gray.Write(message);
+            break;
+         case crop:
+            w_crop.Write(message);
+            break;
+         case rotate:
+            w_rotate.Write(message);
+            break;
+         case end:
+            // write end to all pipes
+            w_flipH.Write(message);
+            w_flipV.Write(message);
+            w_gray.Write(message);
+            w_crop.Write(message);
+            w_rotate.Write(message);
+            break;
+    }
+}
