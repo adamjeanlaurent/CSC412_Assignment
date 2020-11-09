@@ -62,7 +62,7 @@ int main(int argc, char** argv)
     bool endFound = false;
 
     // launch resident dispatchers 
-    std::vector residentDispatchersProcessIds = LaunchResidentDispatchers(&pipes, std::string(argv[3]));
+    std::vector<pid_t> residentDispatchersProcessIds = LaunchResidentDispatchers(&pipes, std::string(argv[3]));
 
     while(!endFound)
     {
@@ -71,7 +71,7 @@ int main(int argc, char** argv)
 
         endFound = ProcessJobFileWithPipes(jobFilePath.c_str(), argv[1], argv[2], argv[3], &pipes);
 
-          char* result;
+        char* result;
 
         if(endFound)
         {
@@ -92,6 +92,6 @@ int main(int argc, char** argv)
     {
         waitpid(pid, &status, 0);
     }
-
+    
     return 0;
 }

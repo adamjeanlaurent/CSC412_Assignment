@@ -134,23 +134,23 @@ void PrintJobList(std::vector<Job> jobList)
 std::string JobToString(Job job, std::string outputPath, std::string dataFolderPath)
 {
     std::string str = "";
-
+    
     switch(job.task)
     {
         case flipH:
-            str += CombinePathWithFile(outputPath, job.imageFilename) ;
+            str += CombinePathWithFile(dataFolderPath, job.imageFilename);
             str += " " + outputPath;
             break;
         case flipV:
-            str += CombinePathWithFile(outputPath, job.imageFilename);
+            str += CombinePathWithFile(dataFolderPath, job.imageFilename);
             str += " " + outputPath;
             break;
          case gray:
-            str += CombinePathWithFile(outputPath, job.imageFilename);
+            str += CombinePathWithFile(dataFolderPath, job.imageFilename);
             str += " " + outputPath;
             break;
          case crop:
-            str += CombinePathWithFile(outputPath, job.imageFilename);
+            str += CombinePathWithFile(dataFolderPath, job.imageFilename);
             str += " " + outputPath;
             str += " " + std::to_string(job.x);
             str += " " + std::to_string(job.y);
@@ -158,7 +158,7 @@ std::string JobToString(Job job, std::string outputPath, std::string dataFolderP
             str += " " + std::to_string(job.h);
             break;
          case rotate:
-            str += CombinePathWithFile(outputPath, job.imageFilename);
+            str += CombinePathWithFile(dataFolderPath, job.imageFilename);
             str += " " + job.rotation;
             str += " " + outputPath;
             break;

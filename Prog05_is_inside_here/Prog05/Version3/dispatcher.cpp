@@ -105,11 +105,15 @@ bool ProcessJobFileWithPipes(const char* jobPath, char* imagesPath, char* output
     }
 }
 
-// launch all resident dispatchers with name of the write pipes as args
 std::vector<pid_t> LaunchResidentDispatchers(PipeManager* pipes, std::string pathToExecs)
 {
     std::string execName = "placeholder";
-    std::string execPath = CombinePathWithFile(pathToExecs, execName);
+    
+    std::string cropResDispatcherPath = CombinePathWithFile(pathToExecs, "cropResDis");
+    std::string flipHResDispatcherPath = CombinePathWithFile(pathToExecs, "flipHResDis");
+    std::string flipVResDispatcherPath = CombinePathWithFile(pathToExecs, "flipVResDis");
+    std::string grayResDispatcherPath = CombinePathWithFile(pathToExecs, "grayResDis");
+    std::string rotateResDispatcherPath = CombinePathWithFile(pathToExecs, "rotateResDis");
 
     Task tasks[] = {crop, flipH, flipV, gray, rotate};
 
@@ -117,6 +121,7 @@ std::vector<pid_t> LaunchResidentDispatchers(PipeManager* pipes, std::string pat
     {
         const_cast<char* const>(execName.c_str()),
         const_cast<char* const>(pipes->w_crop.pipe.c_str()),
+        const_cast<char* const>(pathToExecs.c_str()),
         NULL 
     };
 
@@ -124,6 +129,7 @@ std::vector<pid_t> LaunchResidentDispatchers(PipeManager* pipes, std::string pat
     {
         const_cast<char* const>(execName.c_str()),
         const_cast<char* const>(pipes->w_flipH.pipe.c_str()),
+        const_cast<char* const>(pathToExecs.c_str()),
         NULL 
     };
 
@@ -131,6 +137,7 @@ std::vector<pid_t> LaunchResidentDispatchers(PipeManager* pipes, std::string pat
     {
         const_cast<char* const>(execName.c_str()),
         const_cast<char* const>(pipes->w_flipV.pipe.c_str()),
+        const_cast<char* const>(pathToExecs.c_str()),
         NULL 
     };
 
@@ -138,6 +145,7 @@ std::vector<pid_t> LaunchResidentDispatchers(PipeManager* pipes, std::string pat
     {
         const_cast<char* const>(execName.c_str()),
         const_cast<char* const>(pipes->w_gray.pipe.c_str()),
+        const_cast<char* const>(pathToExecs.c_str()),
         NULL 
     };
 
@@ -145,6 +153,7 @@ std::vector<pid_t> LaunchResidentDispatchers(PipeManager* pipes, std::string pat
     {
         const_cast<char* const>(execName.c_str()),
         const_cast<char* const>(pipes->w_rotate.pipe.c_str()),
+        const_cast<char* const>(pathToExecs.c_str()),
         NULL 
     };
     
@@ -159,19 +168,19 @@ std::vector<pid_t> LaunchResidentDispatchers(PipeManager* pipes, std::string pat
             switch(task)
             {
                 case crop: 
-                    execv(execPath.c_str(), cropArgs);
+                    execv(cropResDispatcherPath.c_str(), cropArgs);
                     break;
                 case flipH:
-                    execv(execPath.c_str(), flipHArgs);
+                    execv(flipHResDispatcherPath.c_str(), flipHArgs);
                     break;
                 case flipV:
-                    execv(execPath.c_str(), flipVArgs);
+                    execv(flipVResDispatcherPath.c_str(), flipVArgs);
                     break;
                 case gray:
-                    execv(execPath.c_str(), grayArgs);
+                    execv(grayResDispatcherPath.c_str(), grayArgs);
                     break;
                 case rotate:
-                    execv(execPath.c_str(), rotateArgs);
+                    execv(rotateResDispatcherPath.c_str(), rotateArgs);
                     break;
             }
         }

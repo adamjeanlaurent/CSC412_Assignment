@@ -18,7 +18,7 @@ Utility::Utility(std::string outputDir, std::string imageDir, Job jobObj, std::s
 
 void Utility::RunTask()
 {
-    std::string fullImagePath = CombinePathWithFile(imagePath, job.imageFilename);
+    std::string fullImagePath = imagePath;
     std::string fullExecPath = CombinePathWithFile(execPath, TaskEnumToString(job.task));
 
     switch(job.task)
