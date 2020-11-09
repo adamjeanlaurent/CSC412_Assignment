@@ -82,8 +82,8 @@ int main(int argc, char **argv)
 
     for(pid_t pid : processIds)
     {
-            int status = 0;
-            waitpid(pid, &status, 0);
+        int status = 0;
+        waitpid(pid, &status, 0);
     }
 
     exit(0);

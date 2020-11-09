@@ -71,8 +71,6 @@ bool ProcessJobFileWithPipes(const char* jobPath, char* imagesPath, char* output
     // read job file
     std::vector<Job> jobList = GetJobList(jobFilePath);
 
-    std::vector<pid_t> processIds;
-
     for(Job job : jobList)
     {
         // if end found
@@ -91,18 +89,9 @@ bool ProcessJobFileWithPipes(const char* jobPath, char* imagesPath, char* output
             // do pipe stuff
             pipes->PipeMessage(job.task, jobString); 
         }
-        else
-        {
-            processIds.push_back(id);
-        }
     }
 
-    int status = 0;
-
-    for(pid_t pid : processIds)
-    {
-        waitpid(pid, &status, 0);
-    }
+    return endFound;
 }
 
 std::vector<pid_t> LaunchResidentDispatchers(PipeManager* pipes, std::string pathToExecs)

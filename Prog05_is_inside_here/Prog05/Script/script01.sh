@@ -37,3 +37,13 @@ g++ ../Version1/main.cpp ../Version1/dispatcher.cpp ../Version1/job.cpp ../Versi
 
 # build version 2 against static library
 g++ ../Version2/main.cpp ../Version2/dispatcher.cpp ../Version2/job.cpp ../Version2/utility.cpp "${IMAGE_LIBRARY_PATH}lib/static/StaticImageLib.a"  -o ./tmp/v2
+
+# build version 3 against static library
+g++ ../Version3/main.cpp ../Version3/dispatcher.cpp ../Version3/job.cpp ../Version3/utility.cpp ../Version3/pipe.cpp "${IMAGE_LIBRARY_PATH}lib/static/StaticImageLib.a"  -o ./tmp/v3
+
+# version 3 resident dispatchers
+g++ ../Version3/rotate_resident_dispatcher.cpp ../Version3/dispatcher.cpp ../Version3/job.cpp ../Version3/utility.cpp ../Version3/pipe.cpp "${IMAGE_LIBRARY_PATH}lib/static/StaticImageLib.a"  -o ./tmp/rotateResDis
+g++ ../Version3/crop_resident_dispatcher.cpp ../Version3/dispatcher.cpp ../Version3/job.cpp ../Version3/utility.cpp ../Version3/pipe.cpp "${IMAGE_LIBRARY_PATH}lib/static/StaticImageLib.a"  -o ./tmp/cropResDis
+g++ ../Version3/flipV_resident_dispatcher.cpp ../Version3/dispatcher.cpp ../Version3/job.cpp ../Version3/utility.cpp ../Version3/pipe.cpp "${IMAGE_LIBRARY_PATH}lib/static/StaticImageLib.a"  -o ./tmp/flipVResDis
+g++ ../Version3/flipH_resident_dispatcher.cpp ../Version3/dispatcher.cpp ../Version3/job.cpp ../Version3/utility.cpp ../Version3/pipe.cpp "${IMAGE_LIBRARY_PATH}lib/static/StaticImageLib.a"  -o ./tmp/flipHResDis
+g++ ../Version3/gray_resident_dispatcher.cpp ../Version3/dispatcher.cpp ../Version3/job.cpp ../Version3/utility.cpp ../Version3/pipe.cpp "${IMAGE_LIBRARY_PATH}lib/static/StaticImageLib.a"  -o ./tmp/grayResDis
