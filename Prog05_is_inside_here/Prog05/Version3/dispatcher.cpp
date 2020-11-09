@@ -10,6 +10,7 @@
 #include "job.h"
 #include "utility.h"
 #include "dispatcher.h"
+#include "pipe.h"
 
 bool ProcessJobFile(char* jobPath, char* imagesPath, char* outputPath, char* execPath)
 {
@@ -56,4 +57,10 @@ bool ProcessJobFile(char* jobPath, char* imagesPath, char* outputPath, char* exe
     }
 
     return endFound;
+}
+
+bool ProcessJobFileWithPipes(const char* jobPath, char* imagesPath, char* outputPath, char* execPath, PipeManager* pipes)
+{
+   // same as above function
+   // except the process will pipe to resident
 }

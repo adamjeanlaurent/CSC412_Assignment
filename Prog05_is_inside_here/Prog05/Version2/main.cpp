@@ -67,7 +67,6 @@ int main(int argc, char** argv)
         // write result to pipe
         writeFD = open(writePipe, O_WRONLY);
         write(writeFD, result, strlen(result) + 1);
-
         // close pipe
         close(writeFD);
     }

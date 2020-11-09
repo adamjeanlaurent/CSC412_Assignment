@@ -1,5 +1,7 @@
 #pragma once
 
+#include "pipe.h"
+
 /**
  * Summary: Wrapper method that read a job file, and processes all tasks within that job file.
  * @param jobPath: Path to job file to process.
@@ -9,3 +11,5 @@
  * @return Returns bool indicating whether an end command was found.
  */ 
 bool ProcessJobFile(char* jobPath, char* imagesPath, char* outputPath, char* execPath);
+
+bool ProcessJobFileWithPipes(const char* jobPath, char* imagesPath, char* outputPath, char* execPath, PipeManager* pipes);

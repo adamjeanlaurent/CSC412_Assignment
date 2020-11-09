@@ -60,5 +60,19 @@ int main(int argc, char** argv)
         "tmp/read_rotate", 
         "tmp/write_rotate");
 
+    std::string jobFilePath;
+
+    bool endFound = false;
+
+    while(!endFound)
+    {
+        // read from bash pipe
+        jobFilePath = pipes.r_bash.Read();
+
+        endFound = ProcessJobFileWithPipes(jobFilePath.c_str(), argv[1], argv[2], argv[3], &pipes);
+
+
+    }
+
     return 0;
 }

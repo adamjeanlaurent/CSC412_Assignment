@@ -15,12 +15,12 @@ Pipe::Pipe(int pipeFD, std::string pipePath)
 void Pipe::Write(std::string message)
 {
     const char* message_cstring = message.c_str();
-    char fullMessage[500];
+    char buffer[500];
 
-    sprintf(fullMessage, "%s\n", message_cstring);
+    sprintf(buffer, "%s\n", message_cstring);
 
     fd = open(pipe.c_str(), O_WRONLY);
-    write(fd, fullMessage, strlen(message_cstring) + 1);
+    write(fd, buffer, strlen(message_cstring) + 1);
     close(fd);
 }
 
@@ -30,8 +30,10 @@ std::string Pipe::Read()
 
     fd = open(pipe.c_str(), O_RDONLY);
     read(fd, buffer, 500);
+    
     buffer[strcspn(buffer, "\n")] = 0;
     close(fd);
+
     return std::string(buffer);
 }
 
