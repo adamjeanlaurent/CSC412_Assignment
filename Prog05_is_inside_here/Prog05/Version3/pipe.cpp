@@ -25,6 +25,11 @@ void Pipe::Write(std::string message)
 
     sprintf(buffer, "%s\n", message_cstring);
 
+    if(strlen(buffer) == 0 || buffer == NULL)
+        exit(0);
+
+    buffer[strlen(buffer)] = '\0';
+
     fd = open(pipe.c_str(), O_WRONLY);
     write(fd, buffer, strlen(buffer) + 1);
     close(fd);

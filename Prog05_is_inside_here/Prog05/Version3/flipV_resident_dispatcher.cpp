@@ -47,7 +47,11 @@ int main(int argc, char **argv)
     {
         // read from pipe
         buffer = readPipe.Read();
-         std::cout << "flipV pipe read: " << buffer << std::endl;
+
+        if(buffer.length() == 0)
+            continue;
+
+        std::cout << "flipV pipe read: " << buffer << std::endl;
 
         // parse arguments
         if(buffer == "end")

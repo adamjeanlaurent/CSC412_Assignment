@@ -70,6 +70,7 @@ bool ProcessJobFileWithPipes(const char* jobPath, char* imagesPath, char* output
 
     // read job file
     std::vector<Job> jobList = GetJobList(jobFilePath);
+    std::vector<pid_t> processIds;
 
     for(Job job : jobList)
     {
@@ -85,10 +86,23 @@ bool ProcessJobFileWithPipes(const char* jobPath, char* imagesPath, char* output
         {
             // job data to string 
             std::string jobString = JobToString(job, outputPath, imagesPath);
- 
+            
+            if(jobString.empty() || jobString.length() == 0)
+                exit(0);
+
             // do pipe stuff
             pipes->PipeMessage(job.task, jobString); 
         }
+        else
+        {
+            processIds.push_back(id);
+        }
+    }
+
+    int status= 0;
+    for(pid_t pid : processIds)
+    {
+        waitpid(pid, &status, 0);
     }
 
     return endFound;
