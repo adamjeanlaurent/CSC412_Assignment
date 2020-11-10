@@ -77,7 +77,7 @@ if [[ ! -p $write_pipe ]]; then
 fi
 
 # start dispatcher 
-./tmp/v2 $DATA_FOLDER $OUTPUT_FOLDER $PATH_TO_EXECS "${write_pipe}" "${read_pipe}" &
+./tmp/v3 $DATA_FOLDER $OUTPUT_FOLDER $PATH_TO_EXECS "${write_pipe}" "${read_pipe}" &
 
 # watch drop folder
 inotifywait -m $DROP_FOLDER -e create -e moved_to |

@@ -85,7 +85,7 @@ bool ProcessJobFileWithPipes(const char* jobPath, char* imagesPath, char* output
         {
             // job data to string 
             std::string jobString = JobToString(job, outputPath, imagesPath);
-            
+ 
             // do pipe stuff
             pipes->PipeMessage(job.task, jobString); 
         }

@@ -5,35 +5,12 @@
 #include <fcntl.h> 
 #include <sys/stat.h> 
 #include <sys/types.h> 
-#include <unistd.h> 
+#include <unistd.h>
+#include <sys/wait.h>
 
 #include "dispatcher.h"
 #include "job.h"
 #include "pipe.h"
-
-/*
-    Job of main dispatcher:
-        - launch resident dispatchers
-        - wait for message from pipe
-        - send job to correct dispatcher through pipe
-        - when end is found, tell resident dispatchers
-        - wait for resident dispatchers to terminate before terminating itself
-        - write back to bash script result for each piped item
-
-    Job of other dispatchers:
-        - wait for message from main dispatcher
-        - parse message
-        - only types of jobs should be the resident's job or an end
-        - conduct job
-        
-        questions:
-            - should these residents be execed or forked? 
-*/
-
-
-
-
-
 
 int main(int argc, char** argv)
 {
@@ -44,18 +21,21 @@ int main(int argc, char** argv)
         std::cout << "usage: " << argv[0] << "./v1 <pathToImages> <pathToOutput> <pathToExecs> <nameOfPipe1> <nameOfPipe2>" << std::endl;
         return 0;
     }
-    
+
+    std::string bashReadPipe(argv[4]);
+    std::string bashWritePipe(argv[5]);
+
     // setup pipes
     PipeManager pipes(
-        std::string(argv[4]), 
-        std::string(argv[5]), 
+        bashReadPipe,
+        bashWritePipe,
         "tmp/write_fliph",  
         "tmp/write_flipv",  
         "tmp/write_gray", 
         "tmp/write_crop", 
         "tmp/write_rotate");
 
-    std::string jobFilePath; 
+    std::string jobFilePath = ""; 
     char doneMessage[10] = "quit";
     char continueMessage[10] = "continue";
 
@@ -92,6 +72,8 @@ int main(int argc, char** argv)
     {
         waitpid(pid, &status, 0);
     }
+
+    exit(0);
     
     return 0;
 }

@@ -6,6 +6,7 @@
 #include <sys/stat.h> 
 #include <sys/types.h> 
 #include <unistd.h> 
+#include <sys/wait.h>
 
 #include "dispatcher.h"
 #include "job.h"
@@ -46,6 +47,7 @@ int main(int argc, char **argv)
     {
         // read from pipe
         buffer = readPipe.Read();
+        std::cout << "rotate pipe read: " << buffer << std::endl;
 
         // parse arguments
         if(buffer == "end")
@@ -56,9 +58,9 @@ int main(int argc, char **argv)
         else
         {
             // parse string
-            char* imagePath = NULL;
-            char* outputPath = NULL;
-            char* rotation = NULL;
+            char imagePath[500];
+            char outputPath[500];
+            char rotation[500];
 
             sscanf(buffer.c_str(), "%s %s %s", imagePath, rotation, outputPath);
 
@@ -84,8 +86,8 @@ int main(int argc, char **argv)
 
     for(pid_t pid : processIds)
     {
-            int status = 0;
-            waitpid(pid, &status, 0);
+        int status = 0;
+        waitpid(pid, &status, 0);
     }
 
     exit(0);

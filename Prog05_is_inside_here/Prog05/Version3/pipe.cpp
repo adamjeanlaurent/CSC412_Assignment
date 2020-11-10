@@ -12,6 +12,12 @@ Pipe::Pipe(int pipeFD, std::string pipePath)
     mkfifo(pipe.c_str(), 0666);
 }
 
+Pipe::Pipe()
+{
+    pipe = "";
+    fd = 0;
+}
+
 void Pipe::Write(std::string message)
 {
     const char* message_cstring = message.c_str();

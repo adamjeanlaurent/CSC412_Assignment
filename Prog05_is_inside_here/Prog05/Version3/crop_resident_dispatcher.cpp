@@ -6,6 +6,7 @@
 #include <sys/stat.h> 
 #include <sys/types.h> 
 #include <unistd.h> 
+#include <sys/wait.h>
 
 #include "dispatcher.h"
 #include "job.h"
@@ -46,6 +47,7 @@ int main(int argc, char **argv)
     {
         // read from pipe
         buffer = readPipe.Read();
+        std::cout << "crop pipe read: " << buffer << std::endl;
 
         // parse arguments
         if(buffer == "end")
@@ -56,15 +58,15 @@ int main(int argc, char **argv)
         else
         {
             // parse string
-            char* imagePath = NULL;
-            char* outputPath = NULL;
+            char imagePath[500];
+            char outputPath[500];
             int x;
             int y;
             int w;
             int h;
 
             sscanf(buffer.c_str(), "%s %s %d %d %d %d", imagePath, outputPath, &x, &y, &w, &h);
-
+        
             Job job;
             job.task = crop;
             job.x = x;
