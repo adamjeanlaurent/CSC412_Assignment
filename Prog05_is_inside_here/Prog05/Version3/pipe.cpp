@@ -79,6 +79,7 @@ void PipeManager::PipeMessage(Task task, std::string message)
     switch(task)
     {
         case flipH:
+            std::cout << "Writing " << message << " to flipH write pipe" << std::endl;
             w_flipH.Write(message);
             break;
         case flipV:
@@ -102,5 +103,6 @@ void PipeManager::PipeMessage(Task task, std::string message)
             w_rotate.Write(message);
             break;
     }
-    exit(0);
+    sleep(2);
+    //exit(0);
 }

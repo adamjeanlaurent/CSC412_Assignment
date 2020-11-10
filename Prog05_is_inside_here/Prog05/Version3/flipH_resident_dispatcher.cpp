@@ -87,10 +87,12 @@ int main(int argc, char **argv)
     }
 
     for(pid_t pid : processIds)
-{
+    {
+        std::cout << "waiting for flipH to end" << std::endl;
         int status = 0;
         waitpid(pid, &status, 0);
     }
 
+    exit(0);
    return 0;
 }
