@@ -47,10 +47,11 @@ int main(int argc, char **argv)
     {
         // read from pipe
         buffer = readPipe.Read();
-        std::cout << "rotate pipe read: " << buffer << std::endl;
 
         if(buffer.length() == 0)
             continue;
+
+        std::cout << "rotate pipe read: " << buffer << std::endl;
 
         // parse arguments
         if(buffer == "end")

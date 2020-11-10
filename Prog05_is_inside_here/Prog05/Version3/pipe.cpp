@@ -43,6 +43,8 @@ std::string Pipe::Read()
     read(fd, buffer, 500);
     
     buffer[strcspn(buffer, "\n")] = 0;
+    buffer[strlen(buffer)] = '\0';
+    
     close(fd);
 
     return std::string(buffer);
