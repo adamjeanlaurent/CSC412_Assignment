@@ -92,5 +92,5 @@ int main(int argc, char **argv)
         waitpid(pid, &status, 0);
     }
 
-    exit(0);
+    return 0;
 }
