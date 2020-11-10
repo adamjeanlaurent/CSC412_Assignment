@@ -26,67 +26,7 @@ int main(int argc, char **argv)
         return 0;
     }
 
-    std::string execPath(argv[2]);
-
-    // establish pipe
-    Pipe readPipe;
-    readPipe.fd = 0;
-    readPipe.pipe = std::string(argv[1]);
-
-    bool endFound = false;
-    std::string buffer;
-
-    std::vector<pid_t> processIds;
-
-    while(!endFound)
-    {
-        // read from pipe
-        buffer = readPipe.Read();
-
-        if(buffer.length() == 0)
-            continue;
-
-        if(buffer == "end")
-        {
-            endFound = true;
-        }
-
-        // parse arguments
-        else
-        {
-            // parse string
-            char imagePath[500];
-            char outputPath[500];
-
-            sscanf(buffer.c_str(), "%s %s", imagePath, outputPath);
-
-            // recoustruct job object
-            Job job;
-            job.task = flipV;
-
-            Utility util(std::string(outputPath), std::string(imagePath), job, execPath);
-
-            // spawn process to run this utility
-            pid_t id = fork();
-            
-            if(id == 0)
-            {
-                util.RunTask();
-            }
-            else
-            {
-                std::cout << imagePath << " Has Been Flipped Vertically." << std::endl;
-                processIds.push_back(id);
-            }
-        }
-    }
-
-    // wait for child processes to finish
-    for(pid_t pid : processIds)
-    {
-        int status = 0;
-        waitpid(pid, &status, 0);
-    }
+    ResidentDispatcherProcessTask(argv[1], argv[2], flipV);
 
     return 0;
 }

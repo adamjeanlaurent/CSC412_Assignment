@@ -15,77 +15,13 @@
 
 int main(int argc, char **argv)
 {
-    // expected args:
-    // 0: execname
-    // 1: pipe to read from
-    // 2: path to execs
-
     if(argc != 3)
     {
         std::cout << "Expected Args: ./flipHResDis <read-pipe> <pathToExecs>" << std::endl;
         return 0;
     }
 
-    std::string execPath(argv[2]);
-
-    // establish pipe
-    Pipe readPipe;
-    readPipe.fd = 0;
-    readPipe.pipe = std::string(argv[1]);
-
-    bool endFound = false;
-    std::string buffer;
-
-    std::vector<pid_t> processIds;
-
-    while(!endFound)
-    {
-        // read from pipe
-        buffer = readPipe.Read();
-      
-        if(buffer.length() == 0)
-            continue;
-
-        if(buffer == "end")
-        {
-            endFound = true;
-        }
-
-        else
-        {
-            // parse arguments
-            char imagePath[500];
-            char outputPath[500];
-
-            sscanf(buffer.c_str(), "%s %s", imagePath, outputPath);
-
-            // reconstruct job object
-            Job job;
-            job.task = flipH;
-
-            Utility util(std::string(outputPath), std::string(imagePath), job, execPath);
-
-            // spawn process to run this utility
-            pid_t id = fork();
-            
-            if(id == 0)
-            {
-                util.RunTask();
-            }
-            else
-            {
-                std::cout << imagePath << " Has Been Flipped Horizontally." << std::endl;
-                processIds.push_back(id);
-            }
-        }
-    }
-
-    // wait for child processes to finish
-    for(pid_t pid : processIds)
-    {
-        int status = 0;
-        waitpid(pid, &status, 0);
-    }
+    ResidentDispatcherProcessTask(argv[1], argv[2], flipH);
 
     return 0;
 }

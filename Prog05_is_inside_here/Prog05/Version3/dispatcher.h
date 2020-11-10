@@ -1,6 +1,7 @@
 #pragma once
 
 #include "pipe.h"
+#include "job.h"
 
 /**
  * Summary: Wrapper method that read a job file, and processes all tasks within that job file.
@@ -24,9 +25,18 @@ bool ProcessJobFile(char* jobPath, char* imagesPath, char* outputPath, char* exe
 bool ProcessJobFileWithPipes(const char* jobPath, char* imagesPath, char* outputPath, char* execPath, PipeManager* pipes);
 
 /**
- * Summarry: Lauches all resident dispatchers with new processes. 
+ * Summary: Lauches all resident dispatchers with new processes. 
  * @param pipes: All pipes used to send messages to resident dispathcers.
  * @param pathToExecs: Path to executables files for image library.
  * @return Vector of process ids of resident dispatchers.
  */
 std::vector<pid_t> LaunchResidentDispatchers(PipeManager* pipes, std::string pathToExecs);
+
+/**
+ * Summary: Ran by a resident dispatcher, waits in a loop for messages from pipe and upon a read processes the task.
+ * @param pipe: Pipe to read from
+ * @param pathToExecs: Path to image library executables
+ * @param task: Task for resident dispatcher to perform
+ * @return void.
+ */ 
+void ResidentDispatcherProcessTask(char* pipe, char* pathToExecs, Task task);
