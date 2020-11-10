@@ -8,13 +8,16 @@ if [[ ! -p $pipe ]]; then
     mkfifo $pipe
 fi
 
-# if read line <$pipe; then
-#     echo "$line"
-# fi
-echo "hello world from bash" >$pipe
-echo "goodbye world from bash" >$pipe
-echo "wassup world from bash" >$pipe
+if read line <$pipe; then
+    echo "$line"
+fi
+
+
+if read line <$pipe; then
+    echo "$line"
+fi
+
 
 # echo "Hello from bash script" >$pipe
 
-echo "done writing"
+echo "done reading"

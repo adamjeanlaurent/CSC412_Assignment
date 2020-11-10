@@ -33,11 +33,6 @@ int main(int argc, char **argv)
     readPipe.fd = 0;
     readPipe.pipe = std::string(argv[1]);
 
-    // keep reading from pipe
-    // parse string
-    // call new process with exec flipH
-    // be careful for end
-
     bool endFound = false;
     std::string buffer;
 
@@ -51,9 +46,6 @@ int main(int argc, char **argv)
         if(buffer.length() == 0)
             continue;
 
-        std::cout << "flipH pipe read: " << buffer << std::endl;
-
-        // parse arguments
         if(buffer == "end")
         {
             endFound = true;
@@ -61,12 +53,13 @@ int main(int argc, char **argv)
 
         else
         {
-            // parse string
+            // parse arguments
             char imagePath[500];
             char outputPath[500];
 
             sscanf(buffer.c_str(), "%s %s", imagePath, outputPath);
 
+            // reconstruct job object
             Job job;
             job.task = flipH;
 
@@ -81,18 +74,18 @@ int main(int argc, char **argv)
             }
             else
             {
+                std::cout << imagePath << " Has Been Flipped Horizontally." << std::endl;
                 processIds.push_back(id);
             }
         }
     }
 
+    // wait for child processes to finish
     for(pid_t pid : processIds)
     {
-        std::cout << "waiting for flipH to end" << std::endl;
         int status = 0;
         waitpid(pid, &status, 0);
     }
 
-    exit(0);
-   return 0;
+    return 0;
 }

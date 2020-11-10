@@ -23,6 +23,7 @@ void Utility::RunTask()
 
     switch(job.task)
     {
+        // launch exec from image library
         case flipH:
             ExecFlipH(fullImagePath, fullExecPath);
             break;
@@ -47,14 +48,13 @@ void Utility::RunTask()
 void Utility::ExecCrop(std::string fullImagePath, std::string fullExecPath)
 {
     execNamePlaceholder = "./crop";
+    
     // convert numbers to strings
     std::string x_string = std::to_string(job.x);
     std::string y_string = std::to_string(job.y);
     std::string w_string = std::to_string(job.w);
     std::string h_string = std::to_string(job.h);
     
-    // reason for const_cast
-    // https://stackoverflow.com/questions/190184/execv-and-const-ness
     char* const arguments[] = 
     {
         const_cast<char* const>(execNamePlaceholder.c_str()), 
@@ -67,6 +67,7 @@ void Utility::ExecCrop(std::string fullImagePath, std::string fullExecPath)
         NULL
     };
 
+    // launch crop
     execv(fullExecPath.c_str(), arguments);
 }
 
@@ -81,6 +82,7 @@ void Utility::ExecFlipH(std::string fullImagePath, std::string fullExecPath)
             NULL
         };
 
+        // launch flipH
         execv(fullExecPath.c_str(), arguments);
 }
 
@@ -94,6 +96,8 @@ void Utility::ExecFlipV(std::string fullImagePath, std::string fullExecPath)
         const_cast<char* const>(outputPath.c_str()),
         NULL
     };
+
+    // launch flipV
     execv(fullExecPath.c_str(), arguments);
 }
 
@@ -107,6 +111,8 @@ void Utility::ExecGray(std::string fullImagePath, std::string fullExecPath)
         const_cast<char* const>(outputPath.c_str()),
         NULL
     };
+
+    // launch gray
     execv(fullExecPath.c_str(), arguments);
 }
 
@@ -121,6 +127,8 @@ void Utility::ExecRotate(std::string fullImagePath, std::string fullExecPath)
         const_cast<char* const>(outputPath.c_str()),
         NULL
     };
+
+    // launch rotate
     execv(fullExecPath.c_str(), arguments);
 }
 

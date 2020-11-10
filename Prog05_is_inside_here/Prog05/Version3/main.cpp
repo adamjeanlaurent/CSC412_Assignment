@@ -49,6 +49,7 @@ int main(int argc, char** argv)
         // read from bash pipe
         jobFilePath = pipes.r_bash.Read();
 
+        // process job file
         endFound = ProcessJobFileWithPipes(jobFilePath.c_str(), argv[1], argv[2], argv[3], &pipes);
 
         char* result;
@@ -66,7 +67,7 @@ int main(int argc, char** argv)
         pipes.w_bash.Write(std::string(result));
     }
     
-    // wait for resident processes to end
+    // wait for resident dispatcher processes to end
     int status = 0;
     for(pid_t pid : residentDispatchersProcessIds)
     {

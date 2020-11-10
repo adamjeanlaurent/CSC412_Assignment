@@ -12,7 +12,8 @@ std::vector<Job> GetJobList(std::string jobFilePath)
         char command[20];
         char rotation[10];
         char filename[500];
-        // loop through enture job file
+
+        // loop through entire job file
         while (fscanf(fp, "%s", command) == 1)
         {
             Job job;
@@ -74,6 +75,7 @@ std::vector<Job> GetJobList(std::string jobFilePath)
     {
         std::cout << "could not open file!" << std::endl;
     }
+
     return jobList;
 }
 
@@ -85,11 +87,6 @@ std::string TaskEnumToString(Task task)
 
 void PrintJobList(std::vector<Job> jobList)
 {
-    if(jobList.size() == 0)
-    {
-        std::cout << "Job List Is Empty! :(" << std::endl;
-    }
-
     for (Job job : jobList)
     {
         switch (job.task)
@@ -124,10 +121,6 @@ void PrintJobList(std::vector<Job> jobList)
     }
 }
 
-// what needs to be piped
-// full path to tga file
-// full path to output
-// other are just numbers and rotations and stuff
 std::string JobToString(Job job, std::string outputPath, std::string dataFolderPath)
 {
     std::string str = "";

@@ -19,13 +19,20 @@ enum Task
 /** Struct for information about any one job. */
 struct Job 
 {
-    int x; /** only used for crop task */
-    int y; /** only used for crop task */
-    int w; /** only used for crop task */
-    int h; /** only used for crop task */
-    std::string rotation; /** only used for rotate task */
-    Task task; /** Task to perform. */
-    std::string imageFilename; /** filename to peform job on. */
+     /** only used for crop task */
+    int x;
+    /** only used for crop task */
+    int y; 
+    /** only used for crop task */
+    int w; 
+    /** only used for crop task */
+    int h; 
+    /** only used for rotate task */
+    std::string rotation; 
+    /** Task to perform. */
+    Task task; 
+    /** filename to peform job on. */
+    std::string imageFilename; 
 };
 
 /**
@@ -49,4 +56,11 @@ void PrintJobList(std::vector<Job> jobList);
  */ 
 std::string TaskEnumToString(Task task);
 
+/**
+ * Summary: Deconstructs a Job object into a string, which will be sent as a message to a resident dispatcher.
+ * @param job: Job object to deconstruct.
+ * @param outputPath: Output path for images.
+ * @param dataFolderPath: Path to data folder.
+ * @return Job as string.
+ */ 
 std::string JobToString(Job job, std::string outputPath, std::string dataFolderPath);

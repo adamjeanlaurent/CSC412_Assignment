@@ -33,11 +33,6 @@ int main(int argc, char **argv)
     readPipe.fd = 0;
     readPipe.pipe = std::string(argv[1]);
 
-    // keep reading from pipe
-    // parse string
-    // call new process with exec crop
-    // be careful for end
-
     bool endFound = false;
     std::string buffer;
 
@@ -51,9 +46,6 @@ int main(int argc, char **argv)
         if(buffer.length() == 0)
             continue;
 
-        std::cout << "crop pipe read: " << buffer << std::endl;
-
-        // parse arguments
         if(buffer == "end")
         {
             endFound = true;
@@ -61,7 +53,7 @@ int main(int argc, char **argv)
 
         else
         {
-            // parse string
+            // parse arguments
             char imagePath[500];
             char outputPath[500];
             int x;
@@ -70,7 +62,8 @@ int main(int argc, char **argv)
             int h;
 
             sscanf(buffer.c_str(), "%s %s %d %d %d %d", imagePath, outputPath, &x, &y, &w, &h);
-        
+
+            // re construct job object
             Job job;
             job.task = crop;
             job.x = x;
@@ -89,11 +82,13 @@ int main(int argc, char **argv)
             }
             else
             {
+                 std::cout << imagePath << " Has Been Cropped." << std::endl;
                 processIds.push_back(id);
             }
         }
     }
 
+    // wait for child processes to end
     for(pid_t pid : processIds)
     {
         int status = 0;

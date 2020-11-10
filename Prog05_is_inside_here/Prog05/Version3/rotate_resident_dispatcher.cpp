@@ -33,11 +33,6 @@ int main(int argc, char **argv)
     readPipe.fd = 0;
     readPipe.pipe = std::string(argv[1]);
 
-    // keep reading from pipe
-    // parse string
-    // call new process with exec rotate
-    // be careful for end
-
     bool endFound = false;
     std::string buffer;
 
@@ -51,23 +46,21 @@ int main(int argc, char **argv)
         if(buffer.length() == 0)
             continue;
 
-        std::cout << "rotate pipe read: " << buffer << std::endl;
-
-        // parse arguments
         if(buffer == "end")
         {
             endFound = true;
         }
 
+        // parse arguments
         else
         {
-            // parse string
             char imagePath[500];
             char outputPath[500];
             char rotation[500];
 
             sscanf(buffer.c_str(), "%s %s %s", imagePath, rotation, outputPath);
 
+            // reconstruct job object
             Job job;
             job.task = rotate;
             job.rotation = std::string(rotation);
@@ -83,11 +76,13 @@ int main(int argc, char **argv)
             }
             else
             {
+                std::cout << imagePath << " Has Been Rotated." << std::endl;
                 processIds.push_back(id);
             }
         }
     }
 
+    // wait for child processes to finish
     for(pid_t pid : processIds)
     {
         int status = 0;
