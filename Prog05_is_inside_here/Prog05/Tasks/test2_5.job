@@ -1,0 +1,16 @@
+flipH clown.tga
+flipH peppers.tga
+flipH cells.tga
+flipV peppers.tga
+flipV clown.tga
+flipV cells.tga
+gray cells.tga
+gray peppers.tga
+gray clown.tga
+rotate -LL claypots.tga
+rotate -LL peppers.tga
+rotate -LL cells.tga
+crop Tyler.tga 10 15 20 25
+crop cells.tga 10 15 20 25
+crop peppers.tga 10 15 20 25
+end

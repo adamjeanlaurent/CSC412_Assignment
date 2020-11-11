@@ -1,0 +1,6 @@
+flipH clown.tga
+flipV peppers.tga
+gray cells.tga
+rotate -LL claypots.tga
+crop Tyler.tga 10 15 20 25
+end
