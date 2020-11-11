@@ -47,3 +47,12 @@ g++ ../Version3/crop_resident_dispatcher.cpp ../Version3/dispatcher.cpp ../Versi
 g++ ../Version3/flipV_resident_dispatcher.cpp ../Version3/dispatcher.cpp ../Version3/job.cpp ../Version3/utility.cpp ../Version3/pipe.cpp "${IMAGE_LIBRARY_PATH}lib/static/StaticImageLib.a"  -o ./tmp/flipVResDis
 g++ ../Version3/flipH_resident_dispatcher.cpp ../Version3/dispatcher.cpp ../Version3/job.cpp ../Version3/utility.cpp ../Version3/pipe.cpp "${IMAGE_LIBRARY_PATH}lib/static/StaticImageLib.a"  -o ./tmp/flipHResDis
 g++ ../Version3/gray_resident_dispatcher.cpp ../Version3/dispatcher.cpp ../Version3/job.cpp ../Version3/utility.cpp ../Version3/pipe.cpp "${IMAGE_LIBRARY_PATH}lib/static/StaticImageLib.a"  -o ./tmp/grayResDis
+
+# build .o files from source with -fPIC
+g++ -I "${IMAGE_LIBRARY_PATH}include/" -fno-use-cxa-atexit -fPIC -c "${IMAGE_LIBRARY_PATH}src/ImageIO.cpp" -o ./tmp/ImageIO.o
+g++ -I "${IMAGE_LIBRARY_PATH}include/" -fno-use-cxa-atexit -fPIC -c "${IMAGE_LIBRARY_PATH}src/ImageIO_TGA.cpp" -o ./tmp/ImageIO_TGA.o
+g++ -I "${IMAGE_LIBRARY_PATH}include/" -fno-use-cxa-atexit -fPIC -c "${IMAGE_LIBRARY_PATH}src/RasterImage.cpp" -o ./tmp/RasterImage.o
+g++ -I "${IMAGE_LIBRARY_PATH}include/" -fno-use-cxa-atexit -fPIC -c "${IMAGE_LIBRARY_PATH}src/utilities.cpp" -o ./tmp/utilities.o
+
+# build shared library .so
+ld -shared ./tmp/ImageIO.o ./tmp/ImageIO_TGA.o ./tmp/RasterImage.o ./tmp/utilities.o  -o "${IMAGE_LIBRARY_PATH}lib/shared/SharedImageLib.so"
