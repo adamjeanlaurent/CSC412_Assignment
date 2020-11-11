@@ -72,6 +72,7 @@ inotifywait -m $DROP_FOLDER -e create -e moved_to |
 
             # move to image dir
             mv "${DROP_FOLDER}${file}" "${DATA_FOLDER}${file}" 
+            echo "Moved ${file} to Data Folder"
         fi
         # ends in .job
         if [[ "$file" =~ .*job$ ]]; then

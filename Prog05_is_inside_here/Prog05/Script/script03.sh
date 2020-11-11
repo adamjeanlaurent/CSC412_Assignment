@@ -87,6 +87,7 @@ inotifywait -m $DROP_FOLDER -e create -e moved_to |
 
             # move to image dir
             mv "${DROP_FOLDER}${file}" "${DATA_FOLDER}${file}" 
+            echo "Moved ${file} to Data Folder"
         fi
         
         # ends in .job
@@ -96,13 +97,13 @@ inotifywait -m $DROP_FOLDER -e create -e moved_to |
 
             # wait for result from pipe
             if read line <$read_pipe; then
-                echo $line
                 # check for quit result
                 if [[ "$line" == 'quit' ]]; then
                     # move job file to completed
                     mv "${DROP_FOLDER}${file}" "${PATH_TO_COMPLETED}${file}"
-
-                    # kill left script
+                    
+                    echo "exiting..."
+                    # kill left pipe
                     pkill -PIPE -P "$$" -x inotifywait
                     # exit
                     exit 1

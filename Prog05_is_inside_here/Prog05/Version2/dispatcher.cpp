@@ -25,6 +25,11 @@ bool ProcessJobFile(char* jobPath, char* imagesPath, char* outputPath, char* exe
 
     std::vector<pid_t> processIds;
 
+    if(jobList.size() == 0)
+    {
+        std::cout << "Empty Job List" << std::endl;
+    }
+
     for(Job job : jobList)
     {
         // break if end found
@@ -38,7 +43,7 @@ bool ProcessJobFile(char* jobPath, char* imagesPath, char* outputPath, char* exe
 
         if(id == 0)
         {
-            // do utility stuff
+            // run utility
             Utility util(pathToOutput, pathToImages, job, execPath);
             util.RunTask();
         }

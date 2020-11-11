@@ -15,18 +15,13 @@
 
 int main(int argc, char **argv)
 {
-    // expected args:
-    // 0: execname
-    // 1: pipe to read from
-    // 2: path to execs
-
     if(argc != 3)
     {
         std::cout << "Expected Args: ./flipVResDis <read-pipe> <pathToExecs>" << std::endl;
         return 0;
     }
 
-    ResidentDispatcherProcessTask(argv[1], argv[2], flipV);
+    ResidentDispatcher(argv[1], argv[2], flipV);
 
     return 0;
 }

@@ -39,4 +39,4 @@ std::vector<pid_t> LaunchResidentDispatchers(PipeManager* pipes, std::string pat
  * @param task: Task for resident dispatcher to perform
  * @return void.
  */ 
-void ResidentDispatcherProcessTask(char* pipe, char* pathToExecs, Task task);
+void ResidentDispatcher(char* pipe, char* pathToExecs, Task task);

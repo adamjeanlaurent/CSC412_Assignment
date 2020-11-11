@@ -15,18 +15,13 @@
 
 int main(int argc, char **argv)
 {
-    // expected args:
-    // 0: execname
-    // 1: pipe to read from
-    // 2: path to execs
-
     if(argc != 3)
     {
         std::cout << "Expected Args: ./cropResDis <read-pipe> <pathToExecs>" << std::endl;
         return 0;
     }
 
-    ResidentDispatcherProcessTask(argv[1], argv[2], crop);
+    ResidentDispatcher(argv[1], argv[2], crop);
 
     return 0;
 }

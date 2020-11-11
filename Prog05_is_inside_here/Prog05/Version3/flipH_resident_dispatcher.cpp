@@ -21,7 +21,7 @@ int main(int argc, char **argv)
         return 0;
     }
 
-    ResidentDispatcherProcessTask(argv[1], argv[2], flipH);
+    ResidentDispatcher(argv[1], argv[2], flipH);
 
     return 0;
 }

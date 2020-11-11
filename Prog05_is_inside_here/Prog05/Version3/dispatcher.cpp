@@ -24,6 +24,11 @@ bool ProcessJobFileWithPipes(const char* jobPath, char* imagesPath, char* output
     // read job file
     std::vector<Job> jobList = GetJobList(jobFilePath);
 
+    if(jobList.size() == 0)
+    {
+        std::cout << "Empty Job List" << std::endl;
+    }
+
     for(Job job : jobList)
     {
         // if end found
@@ -134,7 +139,7 @@ std::vector<pid_t> LaunchResidentDispatchers(PipeManager* pipes, std::string pat
     return processIds;
 }
 
-void ResidentDispatcherProcessTask(char* pipe, char* pathToExecs, Task task)
+void ResidentDispatcher(char* pipe, char* pathToExecs, Task task)
 {
     std::string execPath(pathToExecs);
 

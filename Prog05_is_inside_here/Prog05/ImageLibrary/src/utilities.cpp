@@ -1,11 +1,11 @@
 #include <algorithm>	//	for max
+#include <cstring>
 //
 #include "crop.h"
 #include "gray.h"
 #include "flipV.h"
 #include "flipH.h"
 #include "rotate.h"
-#include <cstring>
 
 using namespace std;
 
@@ -171,6 +171,7 @@ RasterImage cropImage(const RasterImage& imageIn,
 		unsigned char* outRow = static_cast<unsigned char*>(imageOut.raster) +
 								(imageOut.height - i - 1)*imageOut.bytesPerRow;
 								
+		//	version using the 1D raster
 		memcpy(outRow, inRow + cropCornerX * imageIn.bytesPerPixel,
 			   cropWidth*imageIn.bytesPerPixel);
 
@@ -334,13 +335,17 @@ RasterImage rotate(const RasterImage& image, RotationVal rotVal)
 //-------------------------------------------------------------------
 #endif
 
+/**
+ * Returns the average among the red, green, blue channels of a pixel
+ * @param rgba	pointer to the start of an RGBA32 pixel
+ */
 unsigned char toGrayAvg_(const unsigned char* rgba)
 {
 	return static_cast<unsigned char>((rgba[0] + rgba[1] + rgba[2])/3);
 }
 
 /**
- * Returns the max value among ther red, green, blue channels of a pixel
+ * Returns the max value among the red, green, blue channels of a pixel
  * @param rgba	pointer to the start of an RGBA32 pixel
  */
 unsigned char toGrayMax_(const unsigned char* rgba)
