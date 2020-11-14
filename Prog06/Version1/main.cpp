@@ -72,7 +72,7 @@ typedef struct ThreadInfo
 
 void displayGridPane(void);
 void displayStatePane(void);
-void initializeApplication(void);
+void initializeApplication();
 void cleanupAndquit(void);
 void* threadFunc(void*);
 void swapGrids(void);
@@ -122,7 +122,9 @@ unsigned int** nextGrid2D;
 //	implementastion, you should always try to run your code with a
 //	non-square grid to spot accidental row-col inversion bugs.
 //	When this is possible, of course (e.g. makes no sense for a chess program).
-const unsigned int NUM_ROWS = 400, NUM_COLS = 420;
+// const unsigned int numRows = 400, numCols = 420;
+unsigned int numRows;
+unsigned int numCols;
 
 //	the number of live computation threads (that haven't terminated yet)
 unsigned short numLiveThreads = 0;
@@ -163,6 +165,11 @@ int main(int argc, const char* argv[])
 	{
 		return 1;
 	}
+
+	// init rows and columns
+	numCols = atoi(argv[1]);
+	numRows = atoi(argv[2]);
+	
 	//	This takes care of initializing glut and the GUI.
 	//	You shouldn’t have to touch this
 	initializeFrontEnd(argc, argv, displayGridPane, displayStatePane);
@@ -203,20 +210,20 @@ void initializeApplication(void)
     //--------------------
     //  Allocate 1D grids
     //--------------------
-    currentGrid = new unsigned int[NUM_ROWS*NUM_COLS];
-    nextGrid = new unsigned int[NUM_ROWS*NUM_COLS];
+    currentGrid = new unsigned int[numRows*numCols];
+    nextGrid = new unsigned int[numRows*numCols];
 
     //---------------------------------------------
     //  Scaffold 2D arrays on top of the 1D arrays
     //---------------------------------------------
-    currentGrid2D = new unsigned int*[NUM_ROWS];
-    nextGrid2D = new unsigned int*[NUM_ROWS];
+    currentGrid2D = new unsigned int*[numRows];
+    nextGrid2D = new unsigned int*[numRows];
     currentGrid2D[0] = currentGrid;
     nextGrid2D[0] = nextGrid;
-    for (unsigned int i=1; i<NUM_ROWS; i++)
+    for (unsigned int i=1; i<numRows; i++)
     {
-        currentGrid2D[i] = currentGrid2D[i-1] + NUM_COLS;
-        nextGrid2D[i] = nextGrid2D[i-1] + NUM_COLS;
+        currentGrid2D[i] = currentGrid2D[i-1] + numCols;
+        nextGrid2D[i] = nextGrid2D[i-1] + numCols;
     }
 	
 	//---------------------------------------------------------------
@@ -258,9 +265,9 @@ void* threadFunc(void* arg)
 //	heart's content.
 void oneGeneration(void)
 {
-	for (unsigned int i=0; i<NUM_ROWS; i++)
+	for (unsigned int i=0; i<numRows; i++)
 	{
-		for (unsigned int j=0; j<NUM_COLS; j++)
+		for (unsigned int j=0; j<numCols; j++)
 		{
 			unsigned int newState = cellNewState(i, j);
 
@@ -307,7 +314,7 @@ unsigned int cellNewState(unsigned int i, unsigned int j)
 
 	//	Away from the border, we simply count how many among the cell's
 	//	eight neighbors are alive (cell state > 0)
-	if (i>0 && i<NUM_ROWS-1 && j>0 && j<NUM_COLS-1)
+	if (i>0 && i<numRows-1 && j>0 && j<numCols-1)
 	{
 		//	remember that in C, (x == val) is either 1 or 0
 		count = (currentGrid2D[i-1][j-1] != 0) +
@@ -339,32 +346,32 @@ unsigned int cellNewState(unsigned int i, unsigned int j)
 					count++;
 				if (currentGrid2D[i-1][j] != 0)
 					count++;
-				if (j<NUM_COLS-1 && currentGrid2D[i-1][j+1] != 0)
+				if (j<numCols-1 && currentGrid2D[i-1][j+1] != 0)
 					count++;
 			}
 
 			if (j>0 && currentGrid2D[i][j-1] != 0)
 				count++;
-			if (j<NUM_COLS-1 && currentGrid2D[i][j+1] != 0)
+			if (j<numCols-1 && currentGrid2D[i][j+1] != 0)
 				count++;
 
-			if (i<NUM_ROWS-1)
+			if (i<numRows-1)
 			{
 				if (j>0 && currentGrid2D[i+1][j-1] != 0)
 					count++;
 				if (currentGrid2D[i+1][j] != 0)
 					count++;
-				if (j<NUM_COLS-1 && currentGrid2D[i+1][j+1] != 0)
+				if (j<numCols-1 && currentGrid2D[i+1][j+1] != 0)
 					count++;
 			}
 			
 	
 		#elif FRAME_BEHAVIOR == FRAME_WRAPPED
 	
-			unsigned int 	iM1 = (i+NUM_ROWS-1)%NUM_ROWS,
-							iP1 = (i+1)%NUM_ROWS,
-							jM1 = (j+NUM_COLS-1)%NUM_COLS,
-							jP1 = (j+1)%NUM_COLS;
+			unsigned int 	iM1 = (i+numRows-1)%numRows,
+							iP1 = (i+1)%numRows,
+							jM1 = (j+numCols-1)%numCols,
+							jP1 = (j+1)%numCols;
 			count = currentGrid2D[iM1][jM1] != 0 +
 					currentGrid2D[iM1][j] != 0 +
 					currentGrid2D[iM1][jP1] != 0  +
@@ -503,7 +510,7 @@ void displayGridPane(void)
 	//	This is the call that makes OpenGL render the grid.
 	//
 	//---------------------------------------------------------
-	drawGrid(currentGrid2D, NUM_ROWS, NUM_COLS);
+	drawGrid(currentGrid2D, numRows, numCols);
 	
 	//	This is OpenGL/glut magic.  Don't touch
 	glutSwapBuffers();
@@ -628,9 +635,9 @@ void myTimerFunc(int value)
 
 void resetGrid(void)
 {
-	for (unsigned int i=0; i<NUM_ROWS; i++)
+	for (unsigned int i=0; i<numRows; i++)
 	{
-		for (unsigned int j=0; j<NUM_COLS; j++)
+		for (unsigned int j=0; j<numCols; j++)
 		{
 			nextGrid2D[i][j] = rand() % 2;
 		}

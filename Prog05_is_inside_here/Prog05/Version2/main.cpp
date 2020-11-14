@@ -46,7 +46,7 @@ int main(int argc, char** argv)
 
         // remove newline from file path
         jobFilePath[strcspn(jobFilePath, "\n")] = 0;
-
+        
         // process file
         endFound = ProcessJobFile(jobFilePath, argv[1], argv[2], argv[3]);
         
