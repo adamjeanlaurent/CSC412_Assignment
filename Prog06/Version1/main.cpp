@@ -389,10 +389,9 @@ void* threadFunc(void* arg)
 	return NULL;
 }
 
-
 void oneGeneration(void)
 {
-	// create update threads
+	// create update threads and thread infos
 	pthread_t* updateThreads = new pthread_t[maxNumThreads];
 	ThreadInfo* updateThreadInfos = new ThreadInfo[maxNumThreads];
 
@@ -404,10 +403,13 @@ void oneGeneration(void)
 		updateThreadInfos[k].cellsToUpdate = horizontalBands[k];
 	}
 
+	// launch threads
 	for(unsigned int i = 0; i < maxNumThreads; i++)
 	{
 		pthread_create(&updateThreads[i], NULL, threadFunc, &updateThreadInfos[i]);
+		// check for errors here >:(
 	}
+
 
 	// wait for threads to end
 	for(unsigned int j = 0; j < maxNumThreads; j++)
@@ -422,52 +424,6 @@ void oneGeneration(void)
 	
 	swapGrids();
 }
-
-
-//	I have decided to go for maximum modularity and readability, at the
-//	cost of some performance.  This may seem contradictory with the
-//	very purpose of multi-threading our application.  I won't deny it.
-//	My justification here is that this is very much an educational exercise,
-//	my objective being for you to understand and master the mechanisms of
-//	multithreading and synchronization with mutex.  After you get there,
-//	you can micro-optimi1ze your synchronized multithreaded apps to your
-//	heart's content.
-// void oneGeneration(void)
-// // new:
-// // create updateThreads
-// // wait for updateThreads to finish
-// // move code to threadFunc 
-// {
-// 	for (unsigned int i=0; i<numRows; i++)
-// 	{
-// 		for (unsigned int j=0; j<numCols; j++)
-// 		{
-// 			unsigned int newState = cellNewState(i, j);
-
-// 			//	In black and white mode, only alive/dead matters
-// 			//	Dead is dead in any mode
-// 			if (colorMode == 0 || newState == 0)
-// 			{
-// 				nextGrid2D[i][j] = newState;
-// 			}
-// 			//	in color mode, color reflext the "age" of a live cell
-// 			else
-// 			{
-// 				//	Any cell that has not yet reached the "very old cell"
-// 				//	stage simply got one generation older
-// 				if (currentGrid2D[i][j] < NB_COLORS-1)
-// 					nextGrid2D[i][j] = currentGrid2D[i][j] + 1;
-// 				//	An old cell remains old until it dies
-// 				else
-// 					nextGrid2D[i][j] = currentGrid2D[i][j];
-
-// 			}
-// 		}
-// 	}
-// 	generation++;
-	
-// 	swapGrids();
-// }
 
 //	This is the function that determines how a cell update its state
 //	based on that of its neighbors.
