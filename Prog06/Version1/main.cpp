@@ -274,7 +274,7 @@ void initializeApplication(void)
 
 void createMasterComputationThread()
 {
-	pthread_create(&masterComputationThread, NULL, MasterComputationThreadFunc, NULL);
+	pthread_create(&masterComputationThread, NULL, masterComputationThreadFunc, NULL);
 }
 
 void* masterComputationThreadFunc(void* args)
@@ -386,7 +386,7 @@ void* threadFunc(void* arg)
 		int j = cell.j;
 
 		unsigned int newState = cellNewState(i, j);
-
+	
 		//	In black and white mode, only alive/dead matters
 		//	Dead is dead in any mode
 		if (colorMode == 0 || newState == 0)
