@@ -91,6 +91,8 @@ unsigned int cellNewState(unsigned int i, unsigned int j);
 std::vector<std::vector<Cell>> getCellLocationsToUpdate();
 std::vector<int> getIndexRangesForThreads(int numOfCells, int threadCount);
 void printSplitWork(std::vector<std::vector<Cell>> v);
+void CreateMasterComputationThread();
+void* MasterComputationThreadFunc(void* args);
 
 
 //==================================================================================
@@ -265,6 +267,20 @@ void initializeApplication(void)
 //	You will need to implement/modify the two functions below
 //---------------------------------------------------------------------
 
+void CreateMasterComputationThread()
+{
+	// create thread
+	// dont wait for it
+	// move creation of threadinfos here, because they will be the same everything
+	// probably going to need to create another global for this
+}
+
+void* MasterComputationThreadFunc(void* args)
+{
+	// basically this will call one generation
+	// then sleep for a time depending on the slow down / speed up time
+}
+
 void printSplitWork(std::vector<std::vector<Cell>> v)
 {
 	for(unsigned int i = 0; i < maxNumThreads; i++)
@@ -385,7 +401,7 @@ void* threadFunc(void* arg)
 		}	
 	}	
 	
-	usleep(5000);
+	//usleep(5000); idk if this is needed, i don't think so
 	return NULL;
 }
 
