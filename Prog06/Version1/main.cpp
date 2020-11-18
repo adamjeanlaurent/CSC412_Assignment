@@ -40,6 +40,7 @@
 #include <iostream>
 #include <ctime>
 #include <unistd.h>
+ #include <pthread.h>
 //
 #include "gl_frontEnd.h"
 #include "validation.h"
@@ -53,6 +54,13 @@ using namespace std;
 //==================================================================================
 #endif
 
+// captures the location of a cell
+typedef struct Cell 
+{
+	int i;
+	int j;
+} Cell;
+
 typedef struct ThreadInfo
 {
 	//	you probably want these
@@ -61,15 +69,8 @@ typedef struct ThreadInfo
 	//
 	//	whatever other input or output data may be needed
 	//
+	std::vector<Cell> cellsToUpdate;
 } ThreadInfo;
-
-// captures the location of a cell
-typedef struct Cell 
-{
-	int i;
-	int j;
-} Cell;
-
 
 #if 0
 //==================================================================================
@@ -355,15 +356,71 @@ std::vector<std::vector<Cell>> getCellLocationsToUpdate()
 }
 
 void* threadFunc(void* arg)
-// do what one generation did prior 
-// threadInfo should give us the number of rows to do
 {
-	(void) arg;
-	
-	oneGeneration();
+	ThreadInfo info = *(ThreadInfo*)arg;
 
+	for(Cell cell : info.cellsToUpdate)
+	{
+		int i = cell.i;
+		int j = cell.j;
+
+		unsigned int newState = cellNewState(i, j);
+
+		//	In black and white mode, only alive/dead matters
+		//	Dead is dead in any mode
+		if (colorMode == 0 || newState == 0)
+		{
+			nextGrid2D[i][j] = newState;
+		}
+		//	in color mode, color reflext the "age" of a live cell
+		else
+		{
+			//	Any cell that has not yet reached the "very old cell"
+			//	stage simply got one generation older
+			if (currentGrid2D[i][j] < NB_COLORS-1)
+				nextGrid2D[i][j] = currentGrid2D[i][j] + 1;
+			//	An old cell remains old until it dies
+			else
+				nextGrid2D[i][j] = currentGrid2D[i][j];
+		}	
+	}	
+	
 	usleep(5000);
 	return NULL;
+}
+
+
+void oneGeneration(void)
+{
+	// create update threads
+	pthread_t* updateThreads = new pthread_t[maxNumThreads];
+	ThreadInfo* updateThreadInfos = new ThreadInfo[maxNumThreads];
+
+	// init thread infos
+	for(unsigned int k; k < maxNumThreads; k++)
+	{
+		updateThreadInfos[k].threadIndex = k;
+		updateThreadInfos[k].threadID = updateThreads[k];
+		updateThreadInfos[k].cellsToUpdate = horizontalBands[k];
+	}
+
+	for(unsigned int i = 0; i < maxNumThreads; i++)
+	{
+		pthread_create(&updateThreads[i], NULL, threadFunc, &updateThreadInfos[i]);
+	}
+
+	// wait for threads to end
+	for(unsigned int j = 0; j < maxNumThreads; j++)
+	{
+		 pthread_join(updateThreads[j], NULL);
+	}
+
+	delete[] updateThreads;
+	delete[] updateThreadInfos;
+
+	generation++;
+	
+	swapGrids();
 }
 
 
@@ -375,42 +432,42 @@ void* threadFunc(void* arg)
 //	multithreading and synchronization with mutex.  After you get there,
 //	you can micro-optimi1ze your synchronized multithreaded apps to your
 //	heart's content.
-void oneGeneration(void)
-// new:
-// create updateThreads
-// wait for updateThreads to finish
-// move code to threadFunc 
-{
-	for (unsigned int i=0; i<numRows; i++)
-	{
-		for (unsigned int j=0; j<numCols; j++)
-		{
-			unsigned int newState = cellNewState(i, j);
+// void oneGeneration(void)
+// // new:
+// // create updateThreads
+// // wait for updateThreads to finish
+// // move code to threadFunc 
+// {
+// 	for (unsigned int i=0; i<numRows; i++)
+// 	{
+// 		for (unsigned int j=0; j<numCols; j++)
+// 		{
+// 			unsigned int newState = cellNewState(i, j);
 
-			//	In black and white mode, only alive/dead matters
-			//	Dead is dead in any mode
-			if (colorMode == 0 || newState == 0)
-			{
-				nextGrid2D[i][j] = newState;
-			}
-			//	in color mode, color reflext the "age" of a live cell
-			else
-			{
-				//	Any cell that has not yet reached the "very old cell"
-				//	stage simply got one generation older
-				if (currentGrid2D[i][j] < NB_COLORS-1)
-					nextGrid2D[i][j] = currentGrid2D[i][j] + 1;
-				//	An old cell remains old until it dies
-				else
-					nextGrid2D[i][j] = currentGrid2D[i][j];
+// 			//	In black and white mode, only alive/dead matters
+// 			//	Dead is dead in any mode
+// 			if (colorMode == 0 || newState == 0)
+// 			{
+// 				nextGrid2D[i][j] = newState;
+// 			}
+// 			//	in color mode, color reflext the "age" of a live cell
+// 			else
+// 			{
+// 				//	Any cell that has not yet reached the "very old cell"
+// 				//	stage simply got one generation older
+// 				if (currentGrid2D[i][j] < NB_COLORS-1)
+// 					nextGrid2D[i][j] = currentGrid2D[i][j] + 1;
+// 				//	An old cell remains old until it dies
+// 				else
+// 					nextGrid2D[i][j] = currentGrid2D[i][j];
 
-			}
-		}
-	}
-	generation++;
+// 			}
+// 		}
+// 	}
+// 	generation++;
 	
-	swapGrids();
-}
+// 	swapGrids();
+// }
 
 //	This is the function that determines how a cell update its state
 //	based on that of its neighbors.
@@ -729,11 +786,7 @@ void myTimerFunc(int value)
     //  possibly I do something to update the state information displayed
     //	in the "state" pane
 	
-	//==============================================
-	//	This call must **DEFINITELY** go away.
-	//	(when you add proper threading)
-	//==============================================
-    threadFunc(NULL);
+    oneGeneration();
 	
 	//	This is not the way it should be done, but it seems that Apple is
 	//	not happy with having marked glut as deprecated.  They are doing
