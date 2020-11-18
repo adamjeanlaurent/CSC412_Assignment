@@ -36,6 +36,7 @@
  |																			|
  +-------------------------------------------------------------------------*/
 
+#include <vector>
 #include <iostream>
 #include <ctime>
 #include <unistd.h>
@@ -62,6 +63,13 @@ typedef struct ThreadInfo
 	//
 } ThreadInfo;
 
+// captures the location of a cell
+typedef struct Cell 
+{
+	int i;
+	int j;
+} Cell;
+
 
 #if 0
 //==================================================================================
@@ -77,6 +85,11 @@ void cleanupAndquit(void);
 void* threadFunc(void*);
 void swapGrids(void);
 unsigned int cellNewState(unsigned int i, unsigned int j);
+
+// added by me
+std::vector<std::vector<Cell>> getCellLocationsToUpdate();
+std::vector<int> getIndexRangesForThreads(int numOfCells, int threadCount);
+void printSplitWork(std::vector<std::vector<Cell>> v);
 
 
 //==================================================================================
@@ -123,8 +136,13 @@ unsigned int** nextGrid2D;
 //	non-square grid to spot accidental row-col inversion bugs.
 //	When this is possible, of course (e.g. makes no sense for a chess program).
 // const unsigned int numRows = 400, numCols = 420;
+
 unsigned int numRows;
 unsigned int numCols;
+unsigned int maxNumThreads;
+
+//added by me
+std::vector<std::vector<Cell>> horizontalBands;
 
 //	the number of live computation threads (that haven't terminated yet)
 unsigned short numLiveThreads = 0;
@@ -167,8 +185,10 @@ int main(int argc, const char* argv[])
 	}
 
 	// init rows and columns
-	numCols = atoi(argv[1]);
-	numRows = atoi(argv[2]);
+	numRows = atoi(argv[1]);
+	numCols = atoi(argv[2]);
+	maxNumThreads = atoi(argv[3]);
+	horizontalBands = getCellLocationsToUpdate();
 	
 	//	This takes care of initializing glut and the GUI.
 	//	You shouldn’t have to touch this
@@ -244,7 +264,99 @@ void initializeApplication(void)
 //	You will need to implement/modify the two functions below
 //---------------------------------------------------------------------
 
+void printSplitWork(std::vector<std::vector<Cell>> v)
+{
+	for(unsigned int i = 0; i < maxNumThreads; i++)
+	{
+		std::cout << "Thread[" << i << "] Will Work On " << v[i].size() << " cells: " << std::endl;
+
+		for(unsigned int j = 0; j < v[i].size(); j++)
+		{
+			std::cout << "[" << v[i][j].i << "," << v[i][j].j << "] ";
+ 		}
+ 		std::cout << std::endl << std::endl;
+	}
+}
+
+std::vector<int> getIndexRangesForThreads(int numOfCells, int threadCount) 
+{
+    std::vector<int> processIndexes;
+
+    int i;
+    
+    // if number of cells divides evenly into the number of threads
+    // then each thread will process the same number of cells
+    if(numOfCells % threadCount == 0)
+    {
+        for(i = 0; i < threadCount; i++)
+        {
+            processIndexes.push_back(numOfCells/threadCount);
+        }
+    }
+
+    // split the cells into as evenly as possible
+    else
+    {
+        int upTo = threadCount - (numOfCells % threadCount);
+        int quotient = numOfCells/ threadCount;
+        for(i = 0; i < threadCount; i++)
+        {
+            if(i >= upTo)
+            {
+                processIndexes.push_back(quotient + 1);
+            }
+            else
+            {
+                processIndexes.push_back(quotient);
+            }
+        
+        }
+    }   
+    return processIndexes;
+}
+
+// return vector of vectors
+// where vector[i] = vector of Cells, which is the Cells that Thread[i] should work on
+std::vector<std::vector<Cell>> getCellLocationsToUpdate()
+{
+	std::vector<std::vector<Cell>> outerVector;
+
+	// create thread vectors
+	for(unsigned int k = 0; k < maxNumThreads; k++)
+	{
+		std::vector<Cell> vec;
+		outerVector.push_back(vec);
+	}
+
+	std::vector<int> splitWork = getIndexRangesForThreads((numRows*numCols) /* num of cells */, maxNumThreads);
+	int currentThread = 0;
+
+	for(unsigned int i = 0; i < numRows; i++)
+	{
+		for(unsigned int j = 0; j < numCols; j++)
+		{
+			// check if currentThread has all it's cells assigned
+			if(splitWork[currentThread] == 0)
+			{
+				currentThread++;
+			}
+
+			// add cell to threads vector
+			Cell cell;
+			cell.i = i;
+			cell.j = j;
+			outerVector[currentThread].push_back(cell);
+
+			// minus 1 from cells left to assign to thread
+			splitWork[currentThread]--;
+		}
+	}
+	return outerVector;
+}
+
 void* threadFunc(void* arg)
+// do what one generation did prior 
+// threadInfo should give us the number of rows to do
 {
 	(void) arg;
 	
@@ -264,6 +376,10 @@ void* threadFunc(void* arg)
 //	you can micro-optimi1ze your synchronized multithreaded apps to your
 //	heart's content.
 void oneGeneration(void)
+// new:
+// create updateThreads
+// wait for updateThreads to finish
+// move code to threadFunc 
 {
 	for (unsigned int i=0; i<numRows; i++)
 	{

@@ -12,8 +12,8 @@ bool validateArguments(const char** argv, int argc)
 	}
 
 	// convert args to int
-	int width = atoi(argv[1]);
-	int height = atoi(argv[2]);
+	int height = atoi(argv[1]);
+	int width = atoi(argv[2]);
 	int numThreads = atoi(argv[3]);
 
 	// verify width and height are larger than 5
