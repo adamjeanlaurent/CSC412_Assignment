@@ -91,8 +91,8 @@ unsigned int cellNewState(unsigned int i, unsigned int j);
 std::vector<std::vector<Cell>> getCellLocationsToUpdate();
 std::vector<int> getIndexRangesForThreads(int numOfCells, int threadCount);
 void printSplitWork(std::vector<std::vector<Cell>> v);
-void CreateMasterComputationThread();
-void* MasterComputationThreadFunc(void* args);
+void createMasterComputationThread();
+void* masterComputationThreadFunc(void* args);
 
 
 //==================================================================================
@@ -146,6 +146,8 @@ unsigned int maxNumThreads;
 
 //added by me
 std::vector<std::vector<Cell>> horizontalBands;
+pthread_t masterComputationThread;
+bool quit = false;
 
 //	the number of live computation threads (that haven't terminated yet)
 unsigned short numLiveThreads = 0;
@@ -187,11 +189,14 @@ int main(int argc, const char* argv[])
 		return 1;
 	}
 
-	// init rows and columns
+	// init rows and columns and horizontal bands
 	numRows = atoi(argv[1]);
 	numCols = atoi(argv[2]);
 	maxNumThreads = atoi(argv[3]);
 	horizontalBands = getCellLocationsToUpdate();
+
+	// run master computation thread
+	createMasterComputationThread();
 	
 	//	This takes care of initializing glut and the GUI.
 	//	You shouldn’t have to touch this
@@ -213,8 +218,8 @@ int main(int argc, const char* argv[])
 	//	Free allocated resource before leaving (not absolutely needed, but
 	//	just nicer.  Also, if you crash there, you know something is wrong
 	//	in your code.
-	free(currentGrid2D);
-	free(currentGrid);
+	// free(currentGrid2D);
+	// free(currentGrid);
 		
 	//	This will never be executed (the exit point will be in one of the
 	//	call back functions).
@@ -267,18 +272,18 @@ void initializeApplication(void)
 //	You will need to implement/modify the two functions below
 //---------------------------------------------------------------------
 
-void CreateMasterComputationThread()
+void createMasterComputationThread()
 {
-	// create thread
-	// dont wait for it
-	// move creation of threadinfos here, because they will be the same everything
-	// probably going to need to create another global for this
+	pthread_create(&masterComputationThread, NULL, MasterComputationThreadFunc, NULL);
 }
 
-void* MasterComputationThreadFunc(void* args)
+void* masterComputationThreadFunc(void* args)
 {
-	// basically this will call one generation
-	// then sleep for a time depending on the slow down / speed up time
+	while(quit == false)
+	{
+		oneGeneration();
+		sleep(); // for some time depending on timer
+	}
 }
 
 void printSplitWork(std::vector<std::vector<Cell>> v)
@@ -425,7 +430,6 @@ void oneGeneration(void)
 		pthread_create(&updateThreads[i], NULL, threadFunc, &updateThreadInfos[i]);
 		// check for errors here >:(
 	}
-
 
 	// wait for threads to end
 	for(unsigned int j = 0; j < maxNumThreads; j++)
@@ -621,9 +625,13 @@ unsigned int cellNewState(unsigned int i, unsigned int j)
 
 void cleanupAndquit(void)
 {
-	//	join the threads
+	quit = true;
+	//	join the master computation thread
+	pthread_join(masterComputationThread, NULL);
 	
 	//	free the grids
+	delete[] currentGrid2D;
+	delete[] nextGrid2D;
 
 	exit(0);
 }
