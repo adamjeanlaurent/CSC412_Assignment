@@ -148,6 +148,7 @@ unsigned int maxNumThreads;
 std::vector<std::vector<Cell>> horizontalBands;
 pthread_t masterComputationThread;
 bool quit = false;
+int secondsBetweenGenerations = 2;
 
 //	the number of live computation threads (that haven't terminated yet)
 unsigned short numLiveThreads = 0;
@@ -282,7 +283,7 @@ void* masterComputationThreadFunc(void* args)
 	while(quit == false)
 	{
 		oneGeneration();
-		sleep(); // for some time depending on timer
+		sleep(secondsBetweenGenerations);
 	}
 }
 
@@ -712,10 +713,15 @@ void myKeyboardFunc(unsigned char c, int x, int y)
 
 		//	'+' --> increase simulation speed
 		case '+':
+			secondsBetweenGenerations++;
 			break;
 
 		//	'-' --> reduce simulation speed
 		case '-':
+			if(secondsBetweenGenerations == 1)
+				break; // cap at 1 second for fastest speed, could use usleep to make this faster but meh
+			else
+				secondsBetweenGenerations--;
 			break;
 
 		//	'1' --> apply Rule 1 (Game of Life: B23/S3)
@@ -766,7 +772,6 @@ void myTimerFunc(int value)
     //  possibly I do something to update the state information displayed
     //	in the "state" pane
 	
-    oneGeneration();
 	
 	//	This is not the way it should be done, but it seems that Apple is
 	//	not happy with having marked glut as deprecated.  They are doing
