@@ -1,4 +1,24 @@
 # !bin/bash
 
-# build version 1
-g++ -Wall ../Version1/main.cpp ../Version1/gl_frontEnd.cpp ../Version1/validation.cpp -pthread -lGL -lglut -o cell
+WIDTH=$1
+HEIGHT=$2
+NUM_THREADS=$3
+
+if [ ! -d "./tmp/" ]; then
+    mkdir tmp
+fi
+
+# create pipe
+write_pipe=/tmp/bash_to_c
+
+if [[ ! -p $write_pipe ]]; then
+    mkfifo $write_pipe
+fi
+
+USER_INPUT=""
+
+while true; do
+	read USER_INPUT
+	echo $USER_INPUT > write_pipe
+	
+done
