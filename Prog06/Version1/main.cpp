@@ -431,12 +431,16 @@ void oneGeneration(void)
 	{
 		pthread_create(&updateThreads[i], NULL, threadFunc, &updateThreadInfos[i]);
 		// check for errors here >:(
+		numLiveThreads++;
+		drawState(numLiveThreads);
 	}
 
 	// wait for threads to end
 	for(unsigned int j = 0; j < maxNumThreads; j++)
 	{
 		 pthread_join(updateThreads[j], NULL);
+		numLiveThreads--;
+		drawState(numLiveThreads);
 	}
 
 	delete[] updateThreads;
