@@ -195,9 +195,6 @@ int main(int argc, const char* argv[])
 	numCols = atoi(argv[2]);
 	maxNumThreads = atoi(argv[3]);
 	horizontalBands = getCellLocationsToUpdate();
-
-	// run master computation thread
-	createMasterComputationThread();
 	
 	//	This takes care of initializing glut and the GUI.
 	//	You shouldn’t have to touch this
@@ -205,6 +202,9 @@ int main(int argc, const char* argv[])
 	
 	//	Now we can do application-level initialization
 	initializeApplication();
+
+	// run master computation thread
+	createMasterComputationThread();
 
 	//	Now would be the place & time to create mutex locks and threads
 
@@ -285,6 +285,7 @@ void* masterComputationThreadFunc(void* args)
 		oneGeneration();
 		sleep(secondsBetweenGenerations);
 	}
+	return NULL;
 }
 
 void printSplitWork(std::vector<std::vector<Cell>> v)
@@ -414,12 +415,12 @@ void* threadFunc(void* arg)
 void oneGeneration(void)
 {
 	// create update threads and thread infos
-	pthread_t* updateThreads = new pthread_t[maxNumThreads];
-	ThreadInfo* updateThreadInfos = new ThreadInfo[maxNumThreads];
+	pthread_t* updateThreads = new pthread_t[maxNumThreads]();
+	ThreadInfo* updateThreadInfos = new ThreadInfo[maxNumThreads]();
 
 	// init thread infos
-	for(unsigned int k; k < maxNumThreads; k++)
-	{
+	for(unsigned int k = 0; k < maxNumThreads; k++)
+	{		
 		updateThreadInfos[k].threadIndex = k;
 		updateThreadInfos[k].threadID = updateThreads[k];
 		updateThreadInfos[k].cellsToUpdate = horizontalBands[k];
