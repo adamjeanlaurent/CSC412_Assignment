@@ -276,6 +276,8 @@ void initializeApplication(void)
 void createMasterComputationThread()
 {
 	pthread_create(&masterComputationThread, NULL, masterComputationThreadFunc, NULL);
+	numLiveThreads++;
+	drawState(numLiveThreads);
 }
 
 void* masterComputationThreadFunc(void* args)
@@ -425,7 +427,7 @@ void oneGeneration(void)
 		updateThreadInfos[k].threadID = updateThreads[k];
 		updateThreadInfos[k].cellsToUpdate = horizontalBands[k];
 	}
-
+	
 	// launch threads
 	for(unsigned int i = 0; i < maxNumThreads; i++)
 	{
@@ -438,7 +440,7 @@ void oneGeneration(void)
 	// wait for threads to end
 	for(unsigned int j = 0; j < maxNumThreads; j++)
 	{
-		 pthread_join(updateThreads[j], NULL);
+		pthread_join(updateThreads[j], NULL);
 		numLiveThreads--;
 		drawState(numLiveThreads);
 	}
