@@ -1,0 +1,40 @@
+// thread func version 2
+
+// init lock all locks in main thread as locked
+
+threadFunc()
+{
+    while(keepGoing)
+    {
+        for(cell : Cells)
+        {
+            updateRows();
+            
+            lockCountLock();
+            count++;
+            // if last thread
+            if(count == numThreads)
+            {
+                count = 0;
+                generation++;
+                swapGrids();
+                unlockCountLock();
+
+                // unlock all threads
+                for(thread : Threads)
+                {
+                    if(notCurrentThread) // dont unlock current thread because it is already pre-locked and does not need to sleep here
+                        unlock(thead);
+                }
+            }
+            // if not last thread
+            else
+            {
+                unlockCountLock();
+                sleepOnOwnLock(); // this will sleep the thread because locks are pre locked
+                // pre-lock own lock
+                lockOwnLock();
+            }
+        }
+    }
+}
