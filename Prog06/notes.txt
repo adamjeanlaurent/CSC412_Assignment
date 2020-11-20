@@ -1,3 +1,14 @@
+
+plan for v2:
+DONE write new threadFunc
+DONE : write func called updateCell(int i, int j) -> calls cell new state and updates cell in grid 
+DONE one generation is no longer needed, instead rename it to InitLocksAndThreads() and have it init thread infos and init locks as locked and create threads, thats it
+DONE masterComputation is no longer needed
+change cleanup and quit to wait for all threads to finish, if will probably have to unlock all the threads, 
+with that quit set, once all the threads have finished editing the grid the last one inner exit will be set
+then all the other locks will see inner lock and exit()
+that way we can wait on the threads with pthread because they will exit once they are done messing with the grid
+
 // thread func version 2
 
 // init lock all locks in main thread as locked
@@ -6,19 +17,25 @@ threadFunc()
 {
     while(keepGoing)
     {
+        if(innerQuit)
+            exit()
         for(cell : Cells)
         {
-            updateRows();
+            updateCell();
             
             lockCountLock();
             count++;
             // if last thread
             if(count == numThreads)
             {
+                sleepForTimeBetweenGeneration();
                 count = 0;
                 generation++;
                 swapGrids();
                 unlockCountLock();
+                
+                 if(outerQuit)
+                    innerQuit = true
 
                 // unlock all threads
                 for(thread : Threads)
