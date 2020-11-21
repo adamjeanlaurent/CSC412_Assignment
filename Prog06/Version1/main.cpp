@@ -44,6 +44,7 @@
 #include <fcntl.h> 
 #include <sys/stat.h> 
 #include <sys/types.h> 
+#include <cstring>
 //
 #include "gl_frontEnd.h"
 #include "validation.h"
@@ -308,9 +309,16 @@ void* pipeCommunicationThreadFunc(void *args)
 	bool continueReadingFromPipe = true;
 	while(continueReadingFromPipe)
 	{
-		pthread_mutex_lock(&userControlsLock);
 		// read from pipe
 		std::string message = ReadFromPipe();
+		std::cout << "message: " << message << std::endl;
+
+		if(message.empty()) 
+		{
+			continue;
+		} 
+
+		pthread_mutex_lock(&userControlsLock);
 
 		if(message == "rule 1")
 		{
