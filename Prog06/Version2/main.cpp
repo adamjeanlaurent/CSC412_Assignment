@@ -145,7 +145,7 @@ unsigned int numCols;
 unsigned int maxNumThreads;
 std::vector<std::vector<Cell>> horizontalBands;
 bool quit = false;
-unsigned int microSecondsBetweenGenerations = 2;
+unsigned int microSecondsBetweenGenerations = 100000 /* 100,000 */;
 pthread_mutex_t* updateThreadLocks = nullptr;
 pthread_t* updateThreads = nullptr;
 ThreadInfo* updateThreadInfos = nullptr;
