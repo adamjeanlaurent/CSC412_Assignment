@@ -283,7 +283,8 @@ void* masterComputationThreadFunc(void* args)
 	while(quit == false)
 	{
 		oneGeneration();
-		sleep(secondsBetweenGenerations);
+		//sleep(secondsBetweenGenerations);
+		usleep(10000);
 	}
 	return NULL;
 }

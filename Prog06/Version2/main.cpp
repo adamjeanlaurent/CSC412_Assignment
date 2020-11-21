@@ -65,7 +65,7 @@ typedef struct ThreadInfo
 {
 	//	you probably want these
 	pthread_t threadID;
-	int threadIndex;
+	unsigned int threadIndex;
 	//
 	//	whatever other input or output data may be needed
 	//
@@ -83,7 +83,7 @@ void displayGridPane(void);
 void displayStatePane(void);
 void initializeApplication();
 void cleanupAndquit(void);
-void* threadFunc(void*);
+void* computationThreadFunc(void*);
 void swapGrids(void);
 unsigned int cellNewState(unsigned int i, unsigned int j);
 
@@ -92,7 +92,7 @@ std::vector<std::vector<Cell>> getCellLocationsToUpdate();
 std::vector<int> getIndexRangesForThreads(int numOfCells, int threadCount);
 void printSplitWork(std::vector<std::vector<Cell>> v);
 void updateCell(int i, int j);
-void InitLocksAndUpdateThreads();
+void* InitLocksAndUpdateThreads(void* args);
 
 //==================================================================================
 //	Precompiler #define to let us specify how things should be handled at the
@@ -145,12 +145,13 @@ unsigned int numCols;
 unsigned int maxNumThreads;
 std::vector<std::vector<Cell>> horizontalBands;
 bool quit = false;
-int secondsBetweenGenerations = 2;
+unsigned int secondsBetweenGenerations = 2;
 pthread_mutex_t* updateThreadLocks = nullptr;
 pthread_t* updateThreads = nullptr;
 ThreadInfo* updateThreadInfos = nullptr;
 pthread_mutex_t counterLock;
-int numThreadsFinished = 0;
+unsigned int numThreadsFinished = 0;
+pthread_t initThread;
 
 //	the number of live computation threads (that haven't terminated yet)
 unsigned short numLiveThreads = 0;
@@ -206,7 +207,7 @@ int main(int argc, const char* argv[])
 	initializeApplication();
 
 	//	Now would be the place & time to create mutex locks and threads
-	InitLocksAndUpdateThreads();
+	pthread_create(&initThread, NULL, InitLocksAndUpdateThreads, NULL);
 
 	//	Now we enter the main loop of the program and to a large extend
 	//	"lose control" over its execution.  The callback functions that 
@@ -385,7 +386,7 @@ std::vector<std::vector<Cell>> getCellLocationsToUpdate()
 	return outerVector;
 }
 
-void* threadFunc(void* arg)
+void* computationThreadFunc(void* arg)
 {
 	ThreadInfo info = *(ThreadInfo*)arg;
 	
@@ -398,12 +399,13 @@ void* threadFunc(void* arg)
 		{
 			// update cell to new state
 			updateCell(cell.i, cell.j); 
-		}		
+		}	
 		
 		// when done
 		// aquire counter lock
 		pthread_mutex_lock(&counterLock);
 		numThreadsFinished++;
+		pthread_mutex_unlock(&counterLock);
 
 		if(numThreadsFinished == maxNumThreads)
 		{
@@ -411,10 +413,9 @@ void* threadFunc(void* arg)
 			numThreadsFinished = 0;
 			swapGrids();
 			generation++;
-			pthread_mutex_unlock(&counterLock);
-
+			usleep(10000);
 			// unlock all threads
-			for(int i = 0; i < maxNumThreads; i++)
+			for(unsigned int i = 0; i < maxNumThreads; i++)
 			{
 				// no need to unlock current thread
 				if(i != info.threadIndex)
@@ -422,23 +423,25 @@ void* threadFunc(void* arg)
 					pthread_mutex_unlock(&updateThreadLocks[i]);
 				}
 			}
+			//pthread_mutex_unlock(&counterLock);
 		}
 
 		else
 		{
 			// not last thread to finish
-			pthread_mutex_unlock(&counterLock);
+			//pthread_mutex_unlock(&counterLock);
 			// sleep on own lock
 			pthread_mutex_lock(&updateThreadLocks[info.threadIndex]);
+
 			// pre-lock self again
-			pthread_mutex_lock(&updateThreadLocks[info.threadIndex]);
+			// pthread_mutex_lock(&updateThreadLocks[info.threadIndex]);
 		}
 	}
 	
 	return NULL;
 }
 
-void InitLocksAndUpdateThreads(void)
+void* InitLocksAndUpdateThreads(void* args)
 {
 	// create update threads, locks and thread infos
 	updateThreads = new pthread_t[maxNumThreads]();
@@ -446,7 +449,7 @@ void InitLocksAndUpdateThreads(void)
 	updateThreadLocks = new pthread_mutex_t[maxNumThreads]();
 
 	// init locks 
-	for(int j = 0; j < maxNumThreads; j++)
+	for(unsigned int j = 0; j < maxNumThreads; j++)
 	{
 		pthread_mutex_init(&updateThreadLocks[j], NULL);
 	}
@@ -464,9 +467,10 @@ void InitLocksAndUpdateThreads(void)
 	// launch threads
 	for(unsigned int i = 0; i < maxNumThreads; i++)
 	{
-		pthread_create(&updateThreads[i], NULL, threadFunc, &updateThreadInfos[i]);
+		pthread_create(&updateThreads[i], NULL, computationThreadFunc, &updateThreadInfos[i]);
 		// check for errors here >:(
 	}
+	return NULL;
 }
 
 //	This is the function that determines how a cell update its state
