@@ -152,6 +152,7 @@ ThreadInfo* updateThreadInfos = nullptr;
 pthread_mutex_t counterLock;
 unsigned int numThreadsFinished = 0;
 pthread_t initThread;
+bool innerQuit = false;
 
 //	the number of live computation threads (that haven't terminated yet)
 unsigned short numLiveThreads = 0;
@@ -414,6 +415,13 @@ void* computationThreadFunc(void* arg)
 			swapGrids();
 			generation++;
 			usleep(microSecondsBetweenGenerations);
+
+			// quit now if needed, becuase the grid is currently not being edited
+			// setting inner quit will stop all the threads once they wake up
+			if(quit)
+			{
+				innerQuit = true;
+			}
 			// unlock all threads
 			for(unsigned int i = 0; i < maxNumThreads; i++)
 			{
@@ -468,7 +476,6 @@ void* InitLocksAndUpdateThreads(void* args)
 	for(unsigned int i = 0; i < maxNumThreads; i++)
 	{
 		pthread_create(&updateThreads[i], NULL, computationThreadFunc, &updateThreadInfos[i]);
-		// check for errors here >:(
 	}
 	return NULL;
 }
@@ -664,8 +671,7 @@ void cleanupAndquit(void)
 		pthread_join(updateThreads[i] , NULL);
 	}
 	
-	
-	//	free the grids and other stuff
+	//	free the grids, locks, threads, and thread
 	delete[] currentGrid2D;
 	delete[] nextGrid2D;
 	delete[] updateThreadInfos;
