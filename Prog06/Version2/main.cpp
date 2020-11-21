@@ -398,41 +398,41 @@ void* threadFunc(void* arg)
 		{
 			// update cell to new state
 			updateCell(cell.i, cell.j); 
-			
-			// aquire counter lock
-			pthread_mutex_lock(&counterLock);
-			numThreadsFinished++;
+		}		
+		
+		// when done
+		// aquire counter lock
+		pthread_mutex_lock(&counterLock);
+		numThreadsFinished++;
 
-			if(numThreadsFinished == maxNumThreads)
+		if(numThreadsFinished == maxNumThreads)
+		{
+			// all threads finished, this is last thread
+			numThreadsFinished = 0;
+			swapGrids();
+			generation++;
+			pthread_mutex_unlock(&counterLock);
+
+			// unlock all threads
+			for(int i = 0; i < maxNumThreads; i++)
 			{
-				// all threads finished, this is last thread
-				numThreadsFinished = 0;
-				swapGrids();
-				generation++;
-				pthread_mutex_unlock(&counterLock);
-
-				// unlock all threads
-				for(int i = 0; i < maxNumThreads; i++)
+				// no need to unlock current thread
+				if(i != info.threadIndex)
 				{
-					// no need to unlock current thread
-					if(i != info.threadIndex)
-					{
-						pthread_mutex_unlock(&updateThreadLocks[i]);
-					}
+					pthread_mutex_unlock(&updateThreadLocks[i]);
 				}
 			}
+		}
 
-			else
-			{
-				// not last thread to finish
-				pthread_mutex_unlock(&counterLock);
-				// sleep on own lock
-				pthread_mutex_lock(&updateThreadLocks[info.threadIndex]);
-				// pre-lock self again
-				pthread_mutex_lock(&updateThreadLocks[info.threadIndex]);
-			}
-
-		}		
+		else
+		{
+			// not last thread to finish
+			pthread_mutex_unlock(&counterLock);
+			// sleep on own lock
+			pthread_mutex_lock(&updateThreadLocks[info.threadIndex]);
+			// pre-lock self again
+			pthread_mutex_lock(&updateThreadLocks[info.threadIndex]);
+		}
 	}
 	
 	return NULL;
