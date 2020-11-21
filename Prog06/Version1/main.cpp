@@ -287,24 +287,16 @@ void initializeApplication(void)
 //	You will need to implement/modify the two functions below
 //---------------------------------------------------------------------
 
+
 std::string ReadFromPipe()
 {
-	char buffer[500];
-	int fd; 
-	std::string pipe = "./tmp/bash_to_c";
-
-	// mkfifo(pipe.c_str(), 0666);
-    fd = open(pipe.c_str(), O_RDONLY);
-    int res = read(fd, buffer, 500);
-    // std::cout << "hi: " << buffer << std::endl;
-    if(res == -1) return "";
-    
-
+    std::string pipe = "./tmp/bash_to_c";
+    char buffer[500];
+    int fd = open(pipe.c_str(), O_RDONLY);
+    read(fd, buffer, 500);
     buffer[strcspn(buffer, "\n")] = 0;
     buffer[strlen(buffer)] = '\0';
-    
     close(fd);
-
     return std::string(buffer);
 }
 

@@ -18,10 +18,7 @@ if [[ ! -p $write_pipe ]]; then
 fi
 
 # launch cellular automation process version 1
-# ./cellv1 $WIDTH $HEIGHT $NUM_THREADS
-g++ test.cpp -o test
-# ./test
-# ./test
+./cellv1 $WIDTH $HEIGHT $NUM_THREADS
 
 USER_INPUT=""
 
