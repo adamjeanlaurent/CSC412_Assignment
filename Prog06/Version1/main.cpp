@@ -292,9 +292,7 @@ std::string ReadFromPipe()
 {
     std::string pipe = "/tmp/bash_to_c";
     char buffer[500];
-  	std::cout << "block" << std::endl;
     int fd = open(pipe.c_str(), O_RDONLY);
-    std::cout << "unblocked" << std::endl;
     read(fd, buffer, 500);
     buffer[strcspn(buffer, "\n")] = 0;
     buffer[strlen(buffer)] = '\0';
@@ -314,8 +312,6 @@ void* pipeCommunicationThreadFunc(void *args)
 		{
 			continue;
 		} 
-
-		std::cout << "message: " << message << std::endl;
 
 		pthread_mutex_lock(&userControlsLock);
 
