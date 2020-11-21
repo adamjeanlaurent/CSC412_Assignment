@@ -290,9 +290,11 @@ void initializeApplication(void)
 
 std::string ReadFromPipe()
 {
-    std::string pipe = "./tmp/bash_to_c";
+    std::string pipe = "/tmp/bash_to_c";
     char buffer[500];
+  	std::cout << "block" << std::endl;
     int fd = open(pipe.c_str(), O_RDONLY);
+    std::cout << "unblocked" << std::endl;
     read(fd, buffer, 500);
     buffer[strcspn(buffer, "\n")] = 0;
     buffer[strlen(buffer)] = '\0';
@@ -335,11 +337,11 @@ void* pipeCommunicationThreadFunc(void *args)
 		}
 		else if(message == "color on")
 		{
-			colorMode = 1;
+			colorMode = !colorMode;
 		}
 		else if(message == "color off")
 		{
-			colorMode = 0;
+			colorMode = !colorMode;
 		}
 		else if(message == "speedup")
 		{
