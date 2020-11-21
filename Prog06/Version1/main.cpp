@@ -148,7 +148,7 @@ unsigned int maxNumThreads;
 std::vector<std::vector<Cell>> horizontalBands;
 pthread_t masterComputationThread;
 bool quit = false;
-int secondsBetweenGenerations = 2;
+int microSecondsBetweenGenerations = 100000; // init value 100,000
 
 //	the number of live computation threads (that haven't terminated yet)
 unsigned short numLiveThreads = 0;
@@ -283,8 +283,7 @@ void* masterComputationThreadFunc(void* args)
 	while(quit == false)
 	{
 		oneGeneration();
-		//sleep(secondsBetweenGenerations);
-		usleep(10000);
+		usleep(microSecondsBetweenGenerations);
 	}
 	return NULL;
 }
@@ -715,15 +714,15 @@ void myKeyboardFunc(unsigned char c, int x, int y)
 
 		//	'+' --> increase simulation speed
 		case '+':
-			secondsBetweenGenerations++;
+			microSecondsBetweenGenerations += 100000 /* 100,000 */;
 			break;
 
 		//	'-' --> reduce simulation speed
 		case '-':
-			if(secondsBetweenGenerations == 1)
-				break; // cap at 1 second for fastest speed, could use usleep to make this faster but meh
+			if(microSecondsBetweenGenerations == 100000)
+				break; // cap at 0.1 second for slowest speed
 			else
-				secondsBetweenGenerations--;
+				microSecondsBetweenGenerations -= 100000 /* 100,000 */;
 			break;
 
 		//	'1' --> apply Rule 1 (Game of Life: B23/S3)
