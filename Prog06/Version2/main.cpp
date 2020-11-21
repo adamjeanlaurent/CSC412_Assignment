@@ -654,7 +654,15 @@ unsigned int cellNewState(unsigned int i, unsigned int j)
 void cleanupAndquit(void)
 {
 	quit = true;
-	//	join the master computation thread
+
+	// join init thread
+	pthread_join(initThread, NULL);
+
+	// join all update threads 
+	for(unsigned int i = 0; i < maxNumThreads; i++)
+	{
+		pthread_join(updateThreads[i] , NULL);
+	}
 	
 	
 	//	free the grids and other stuff
