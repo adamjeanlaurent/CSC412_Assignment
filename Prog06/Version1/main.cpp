@@ -40,7 +40,10 @@
 #include <iostream>
 #include <ctime>
 #include <unistd.h>
- #include <pthread.h>
+#include <pthread.h>
+#include <fcntl.h> 
+#include <sys/stat.h> 
+#include <sys/types.h> 
 //
 #include "gl_frontEnd.h"
 #include "validation.h"
@@ -93,6 +96,9 @@ std::vector<int> getIndexRangesForThreads(int numOfCells, int threadCount);
 void printSplitWork(std::vector<std::vector<Cell>> v);
 void createMasterComputationThread();
 void* masterComputationThreadFunc(void* args);
+std::string ReadFromPipe();
+void* pipeCommunicationThreadFunc(void *args);
+void createPipeCommunicationThread();
 
 
 //==================================================================================
@@ -149,6 +155,8 @@ std::vector<std::vector<Cell>> horizontalBands;
 pthread_t masterComputationThread;
 bool quit = false;
 int microSecondsBetweenGenerations = 100000; // init value 100,000
+pthread_mutex_t userControlsLock;
+bool stopFromBash = false;
 
 //	the number of live computation threads (that haven't terminated yet)
 unsigned short numLiveThreads = 0;
@@ -196,12 +204,17 @@ int main(int argc, const char* argv[])
 	maxNumThreads = atoi(argv[3]);
 	horizontalBands = getCellLocationsToUpdate();
 	
+	// init user controls lock
+	pthread_mutex_init(&userControlsLock, NULL);
 	//	This takes care of initializing glut and the GUI.
 	//	You shouldn’t have to touch this
 	initializeFrontEnd(argc, argv, displayGridPane, displayStatePane);
 	
 	//	Now we can do application-level initialization
 	initializeApplication();
+
+	// create pipe communication thread
+	createPipeCommunicationThread();
 
 	// run master computation thread
 	createMasterComputationThread();
@@ -272,6 +285,83 @@ void initializeApplication(void)
 //---------------------------------------------------------------------
 //	You will need to implement/modify the two functions below
 //---------------------------------------------------------------------
+
+std::string ReadFromPipe()
+{
+	char buffer[500];
+	int fd; 
+	std::string pipe = "./tmp/bash_to_c";
+
+    fd = open(pipe.c_str(), O_RDONLY);
+    read(fd, buffer, 500);
+    
+    buffer[strcspn(buffer, "\n")] = 0;
+    buffer[strlen(buffer)] = '\0';
+    
+    close(fd);
+
+    return std::string(buffer);
+}
+
+void* pipeCommunicationThreadFunc(void *args)
+{
+	bool continueReadingFromPipe = true;
+	while(continueReadingFromPipe)
+	{
+		pthread_mutex_lock(&userControlsLock);
+		// read from pipe
+		std::string message = ReadFromPipe();
+
+		if(message == "rule 1")
+		{
+			rule = GAME_OF_LIFE_RULE;
+		}
+		else if(message == "rule 2")
+		{
+			rule = CORAL_GROWTH_RULE;
+		}
+		else if(message == "rule 3")
+		{
+			rule = AMOEBA_RULE;
+		}
+		else if(message == "rule 4")
+		{
+			rule = MAZE_RULE;
+		}
+		else if(message == "color on")
+		{
+			colorMode = 1;
+		}
+		else if(message == "color off")
+		{
+			colorMode = 0;
+		}
+		else if(message == "speedup")
+		{
+			microSecondsBetweenGenerations += 100000 /* 100,000 */;
+		}
+		else if(message == "slowdown")
+		{
+			if(microSecondsBetweenGenerations == 100000)
+				break; // cap at 0.1 second for slowest speed
+			else
+				microSecondsBetweenGenerations -= 100000 /* 100,000 */;
+		}
+		else if(message == "end")
+		{
+			stopFromBash = true;
+			continueReadingFromPipe = false;
+		}
+		pthread_mutex_unlock(&userControlsLock);
+	}
+	return NULL;
+}
+
+void createPipeCommunicationThread()
+{
+	pthread_t pipeCommunicationThread;
+	pthread_create(&pipeCommunicationThread, NULL, pipeCommunicationThreadFunc, NULL);
+}
 
 void createMasterComputationThread()
 {
@@ -700,6 +790,7 @@ void myKeyboardFunc(unsigned char c, int x, int y)
 {
 	(void) x; (void) y;
 	
+	pthread_mutex_lock(&userControlsLock);
 	switch (c)
 	{
 		//	'ESC' --> exit the application
@@ -760,6 +851,7 @@ void myKeyboardFunc(unsigned char c, int x, int y)
 		default:
 			break;
 	}
+	pthread_mutex_unlock(&userControlsLock);
 	
 	glutSetWindow(gMainWindow);
 	glutPostRedisplay();
@@ -770,6 +862,12 @@ void myTimerFunc(int value)
 	//	value not used.  Warning suppression
 	(void) value;
 	
+	// checks if stopFromBash
+	if(stopFromBash)
+	{
+		cleanupAndquit();
+	}
+
     //  possibly I do something to update the state information displayed
     //	in the "state" pane
 	

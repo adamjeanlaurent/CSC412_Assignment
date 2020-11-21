@@ -742,7 +742,7 @@ void displayStatePane(void)
 void myKeyboardFunc(unsigned char c, int x, int y)
 {
 	(void) x; (void) y;
-	
+
 	switch (c)
 	{
 		//	'ESC' --> exit the application
