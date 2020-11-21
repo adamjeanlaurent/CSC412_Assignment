@@ -293,9 +293,13 @@ std::string ReadFromPipe()
 	int fd; 
 	std::string pipe = "./tmp/bash_to_c";
 
+	// mkfifo(pipe.c_str(), 0666);
     fd = open(pipe.c_str(), O_RDONLY);
-    read(fd, buffer, 500);
+    int res = read(fd, buffer, 500);
+    // std::cout << "hi: " << buffer << std::endl;
+    if(res == -1) return "";
     
+
     buffer[strcspn(buffer, "\n")] = 0;
     buffer[strlen(buffer)] = '\0';
     
@@ -311,12 +315,13 @@ void* pipeCommunicationThreadFunc(void *args)
 	{
 		// read from pipe
 		std::string message = ReadFromPipe();
-		std::cout << "message: " << message << std::endl;
-
+		
 		if(message.empty()) 
 		{
 			continue;
 		} 
+
+		std::cout << "message: " << message << std::endl;
 
 		pthread_mutex_lock(&userControlsLock);
 

@@ -21,6 +21,6 @@ fi
 USER_INPUT=""
 
 while true; do
-	read USER_INPUT
-	echo $USER_INPUT > write_pipe
+	read $USER_INPUT
+	echo $USER_INPUT > $write_pipe
 done
