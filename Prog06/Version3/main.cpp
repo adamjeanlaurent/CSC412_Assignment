@@ -149,7 +149,7 @@ unsigned int numRows;
 unsigned int numCols;
 unsigned int maxNumThreads;
 bool quit = false;
-unsigned int microSecondsBetweenGenerations = 50000 /* 50,000 */;
+unsigned int microSecondsBetweenGenerations = 5000 /* 5,000 */;
 pthread_t* updateThreads = nullptr;
 ThreadInfo* updateThreadInfos = nullptr;
 pthread_t initThread;
@@ -293,8 +293,10 @@ void editLockSqaure(int row, int col, LockGridAction action)
 	// lock or unlock all locks in square
 	for(std::pair<int, int> &lockLocation : lockIndexes)
 	{
-		int i = lockLocation.first;
-		int j = lockLocation.second;
+		if(lockLocation.first < 0 || lockLocation.second < 0) continue; // ignore negatives
+
+		unsigned int i = lockLocation.first;
+		unsigned int j = lockLocation.second;
 
 		// ensure that lock is in bounds of grid
 		if(i < numRows && i >= 0 && j < numCols && j >= 0)
@@ -335,7 +337,7 @@ void updateCell(int i, int j)
 	//	Dead is dead in any mode
 	if (colorMode == 0 || newState == 0)
 	{
-		nextGrid2D[i][j] = newState;
+		currentGrid2D[i][j] = newState;
 	}
 	//	in color mode, color reflext the "age" of a live cell
 	else
@@ -343,10 +345,10 @@ void updateCell(int i, int j)
 		//	Any cell that has not yet reached the "very old cell"
 		//	stage simply got one generation older
 		if (currentGrid2D[i][j] < NB_COLORS-1)
-			nextGrid2D[i][j] = currentGrid2D[i][j] + 1;
+			currentGrid2D[i][j] = currentGrid2D[i][j] + 1;
 		//	An old cell remains old until it dies
 		else
-			nextGrid2D[i][j] = currentGrid2D[i][j];
+			currentGrid2D[i][j] = currentGrid2D[i][j];
 	}	
 }
 
@@ -685,15 +687,15 @@ void myKeyboardFunc(unsigned char c, int x, int y)
 
 		//	'+' --> increase simulation speed
 		case '+':
-			microSecondsBetweenGenerations += 100000 /* 100,000 */;
+			microSecondsBetweenGenerations += 1000;
 			break;
 
 		//	'-' --> reduce simulation speed
 		case '-':
-			if(microSecondsBetweenGenerations == 100000)
-				break; // cap at 0.1 second for slowest speed
+			if(microSecondsBetweenGenerations == 1000)
+				break; // cap at slowest speed
 			else
-				microSecondsBetweenGenerations -= 100000 /* 100,000 */;
+				microSecondsBetweenGenerations -= 1000;
 			break;
 
 		//	'1' --> apply Rule 1 (Game of Life: B23/S3)
