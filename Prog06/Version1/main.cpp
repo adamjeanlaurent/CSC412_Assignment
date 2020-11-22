@@ -290,7 +290,7 @@ void initializeApplication(void)
 
 std::string ReadFromPipe()
 {
-    std::string pipe = "./tmp/bash_to_c";
+    std::string pipe = "/tmp/bash_to_c";
     char buffer[500];
     int fd = open(pipe.c_str(), O_RDONLY);
     read(fd, buffer, 500);
@@ -313,8 +313,6 @@ void* pipeCommunicationThreadFunc(void *args)
 			continue;
 		} 
 
-		std::cout << "message: " << message << std::endl;
-
 		pthread_mutex_lock(&userControlsLock);
 
 		if(message == "rule 1")
@@ -335,11 +333,11 @@ void* pipeCommunicationThreadFunc(void *args)
 		}
 		else if(message == "color on")
 		{
-			colorMode = 1;
+			colorMode = !colorMode;
 		}
 		else if(message == "color off")
 		{
-			colorMode = 0;
+			colorMode = !colorMode;
 		}
 		else if(message == "speedup")
 		{

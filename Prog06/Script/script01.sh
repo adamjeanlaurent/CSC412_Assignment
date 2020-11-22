@@ -4,25 +4,30 @@ WIDTH=$1
 HEIGHT=$2
 NUM_THREADS=$3
 
-# create pipe
-write_pipe=./tmp/bash_to_c
-
-if [ ! -d "./tmp/" ]; then
-    mkdir tmp
+# ensure we have 3 arguments
+if [ "$#" -ne 3 ]; then
+	echo "usage: ./script01.sh <WIDTH> <HEIGHT> <NUMTHREADS>"
+	exit 1
 fi
 
-# rm tmp/bash_to_c
+# create pipe
+write_pipe=/tmp/bash_to_c
 
 if [[ ! -p $write_pipe ]]; then
     mkfifo $write_pipe
 fi
 
-# launch cellular automation process version 1
-./cellv1 $WIDTH $HEIGHT $NUM_THREADS
-
 USER_INPUT=""
+
+# launch cellular automation process version 1
+./tmp/cellv1 $WIDTH $HEIGHT $NUM_THREADS &
 
 while true; do
 	read USER_INPUT
 	echo $USER_INPUT > $write_pipe
+
+	# quit script if user typed in "end"
+	if [ $USER_INPUT == "end" ]; then
+  		exit 1
+	fi
 done

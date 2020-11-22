@@ -431,18 +431,13 @@ void* computationThreadFunc(void* arg)
 					pthread_mutex_unlock(&updateThreadLocks[i]);
 				}
 			}
-			//pthread_mutex_unlock(&counterLock);
 		}
 
 		else
 		{
 			// not last thread to finish
-			//pthread_mutex_unlock(&counterLock);
 			// sleep on own lock
 			pthread_mutex_lock(&updateThreadLocks[info.threadIndex]);
-
-			// pre-lock self again
-			// pthread_mutex_lock(&updateThreadLocks[info.threadIndex]);
 		}
 	}
 	
