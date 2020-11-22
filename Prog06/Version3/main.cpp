@@ -685,13 +685,13 @@ void myKeyboardFunc(unsigned char c, int x, int y)
 			resetGrid();
 			break;
 
-		//	'+' --> increase simulation speed
-		case '+':
+		//	'+' --> reduce simulation speed
+		case '-':
 			microSecondsBetweenGenerations += 1000;
 			break;
 
-		//	'-' --> reduce simulation speed
-		case '-':
+		//	'-' --> increase simulation speed
+		case '+':
 			if(microSecondsBetweenGenerations == 1000)
 				break; // cap at slowest speed
 			else

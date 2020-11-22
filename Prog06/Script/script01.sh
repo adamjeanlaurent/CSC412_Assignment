@@ -27,7 +27,7 @@ while true; do
 	echo $USER_INPUT > $write_pipe
 
 	# quit script if user typed in "end"
-	if [ $USER_INPUT == "end" ]; then
+	if [ "${USER_INPUT}" == "end" ]; then
   		exit 1
 	fi
 done

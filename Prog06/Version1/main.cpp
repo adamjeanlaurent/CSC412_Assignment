@@ -307,11 +307,14 @@ void* pipeCommunicationThreadFunc(void *args)
 	{
 		// read from pipe
 		std::string message = ReadFromPipe();
+
 		
 		if(message.empty()) 
 		{
 			continue;
 		} 
+
+		// std::cout << "message: " << message << std::endl;
 
 		pthread_mutex_lock(&userControlsLock);
 
@@ -339,11 +342,11 @@ void* pipeCommunicationThreadFunc(void *args)
 		{
 			colorMode = !colorMode;
 		}
-		else if(message == "speedup")
+		else if(message == "slowdown")
 		{
 			microSecondsBetweenGenerations += 100000 /* 100,000 */;
 		}
-		else if(message == "slowdown")
+		else if(message == "speedup")
 		{
 			if(microSecondsBetweenGenerations == 100000)
 				break; // cap at 0.1 second for slowest speed
@@ -806,13 +809,13 @@ void myKeyboardFunc(unsigned char c, int x, int y)
 			resetGrid();
 			break;
 
-		//	'+' --> increase simulation speed
-		case '+':
+		//	'+' --> reduce simulation speed
+		case '-':
 			microSecondsBetweenGenerations += 100000 /* 100,000 */;
 			break;
 
-		//	'-' --> reduce simulation speed
-		case '-':
+		//	'-' --> increase simulation speed
+		case '+':
 			if(microSecondsBetweenGenerations == 100000)
 				break; // cap at 0.1 second for slowest speed
 			else
