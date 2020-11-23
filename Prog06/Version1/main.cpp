@@ -133,6 +133,12 @@ void* masterComputationThreadFunc(void* args);
 std::string ReadFromPipe();
 
 /**
+ * Summary: Writes a message to a named pipe.
+ * @return void.
+ */ 
+void WriteToPipe();
+
+/**
  * Summary: Thread function for the pipe communication thread, reads from pipe in a loop and performs actions.
  * @param args: Void pointer to argument.
  * @return: void*, returns NULL.
@@ -330,6 +336,25 @@ void initializeApplication(void)
 //	You will need to implement/modify the two functions below
 //---------------------------------------------------------------------
 
+void WriteToPipe()
+{
+	std::string pipe = "/tmp/c_to_bash";
+
+	// prepare message
+	std::string message = "done";
+	const char* message_cstring = message.c_str();
+    char buffer[500];
+	sprintf(buffer, "%s\n", message_cstring);
+	buffer[strlen(buffer)] = '\0';
+
+	// open pipe
+	int fd = open(pipe.c_str(), O_WRONLY);
+    write(fd, buffer, strlen(buffer) + 1);
+
+	// close pipe
+	close(fd);
+}
+
 std::string ReadFromPipe()
 {
     std::string pipe = "/tmp/bash_to_c";
@@ -414,6 +439,9 @@ void* pipeCommunicationThreadFunc(void *args)
 
 		// unclock user controls lock
 		pthread_mutex_unlock(&userControlsLock);
+
+		// tell bash we are done with this command and that it can accept another
+		WriteToPipe();
 	}
 	return NULL;
 }
