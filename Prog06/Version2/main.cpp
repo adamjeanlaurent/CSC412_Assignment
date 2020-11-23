@@ -420,7 +420,7 @@ std::vector<std::vector<Cell>> getCellLocationsToUpdate()
 }
 
 void* computationThreadFunc(void* arg)
-{
+{	
 	ThreadInfo info = *(ThreadInfo*)arg;
 	
 	// lock initially

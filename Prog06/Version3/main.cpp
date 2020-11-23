@@ -373,8 +373,6 @@ void updateCell(int i, int j)
 		if (currentGrid2D[i][j] < NB_COLORS-1)
 			currentGrid2D[i][j] = currentGrid2D[i][j] + 1;
 		//	An old cell remains old until it dies
-		else
-			currentGrid2D[i][j] = currentGrid2D[i][j];
 	}	
 }
 
