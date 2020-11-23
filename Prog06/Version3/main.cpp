@@ -61,6 +61,7 @@ typedef struct Cell
 	int j;
 } Cell;
 
+// captures the action you want to take on the lock grid
 enum LockGridAction
 {
 	LOCK,
@@ -93,10 +94,34 @@ void* computationThreadFunc(void*);
 void swapGrids(void);
 unsigned int cellNewState(unsigned int i, unsigned int j);
 
-// added by me
+/**
+ * Summary: Updates the state of a cell in the grid.
+ * @param i: row index of cell.
+ * @param j: column index of cell.
+ * @return: void.
+ */  
 void updateCell(int i, int j);
+
+/**
+ * Summary: Inits all locks and threads for the application.
+ * @param args: void* arg.
+ * @return: void*, returns NULL.
+ */ 
 void* InitLocksAndUpdateThreads(void* args);
+
+/**
+ * Summary: Picks random cell in grid to update.
+ * @return: Cell, where cell.i and cell.j is random location in the grid.
+ */ 
 Cell pickRandomCellToUpdate();
+
+/**
+ * Summary: Locks or unlocks a 3x3 square of locks in the lockGrid, centered around row, col.
+ * @param row: row index of middle cell of lock square.
+ * @param col: column index of middle cell of lock square.
+ * @param action: What action to take on the lock square, either LOCK, or UNLOCK.
+ * 
+ */ 
 void editLockSqaure(int row, int col, LockGridAction action);
 
 //==================================================================================
@@ -145,15 +170,15 @@ unsigned int** nextGrid2D;
 // const unsigned int numRows = 400, numCols = 420;
 
 //added by me
-unsigned int numRows;
-unsigned int numCols;
-unsigned int maxNumThreads;
-bool quit = false;
-unsigned int microSecondsBetweenGenerations = 5000 /* 5,000 */;
-pthread_t* updateThreads = nullptr;
-ThreadInfo* updateThreadInfos = nullptr;
-pthread_t initThread;
-std::vector<std::vector<pthread_mutex_t>> lockGrid;
+unsigned int numRows; // number of rows in grid
+unsigned int numCols; // number of columns in grid
+unsigned int maxNumThreads; // number of threads working on the grid
+bool quit = false; // stops computation threads computations when set to true
+unsigned int microSecondsBetweenGenerations = 5000; // init value 5000 micro seconds
+pthread_t* updateThreads = nullptr; // array of update threads 
+ThreadInfo* updateThreadInfos = nullptr; // array of threadsInfos for update threads
+pthread_t initThread; // thread that inits all locks and threadInfos
+std::vector<std::vector<pthread_mutex_t>> lockGrid; // grid of locks, indentical in size of CA grid
 
 //	the number of live computation threads (that haven't terminated yet)
 unsigned short numLiveThreads = 0;
@@ -331,6 +356,7 @@ Cell pickRandomCellToUpdate()
 
 void updateCell(int i, int j)
 {
+	// get new cell state
 	unsigned int newState = cellNewState(i, j);
 
 	//	In black and white mode, only alive/dead matters
@@ -358,6 +384,7 @@ void* computationThreadFunc(void* arg)
 	
 	while(!quit)
 	{
+		// sleep
 		usleep(microSecondsBetweenGenerations);
 
 		// pick random cell to update
@@ -382,7 +409,7 @@ void* InitLocksAndUpdateThreads(void* args)
 	updateThreads = new pthread_t[maxNumThreads]();
 	updateThreadInfos = new ThreadInfo[maxNumThreads]();
 	
-	// init locks 
+	// init lock grid
 	for(unsigned int i = 0; i < numRows; i++)
 	{
 		std::vector<pthread_mutex_t> lockVec;

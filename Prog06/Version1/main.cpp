@@ -515,7 +515,7 @@ std::vector<std::vector<Cell>> getCellLocationsToUpdate()
 		for(unsigned int j = 0; j < numCols; j++)
 		{
 			// check if currentThread has all it's cells assigned
-			// if no start assigning to the new thread
+			// if no start assigning to the next thread
 			if(splitWork[currentThread] == 0)
 			{
 				currentThread++;
@@ -594,7 +594,7 @@ void oneGeneration(void)
 	{
 		pthread_join(updateThreads[j], NULL);
 	}
-	
+
 	delete[] updateThreads;
 	delete[] updateThreadInfos;
 

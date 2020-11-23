@@ -87,11 +87,40 @@ void* computationThreadFunc(void*);
 void swapGrids(void);
 unsigned int cellNewState(unsigned int i, unsigned int j);
 
-// added by me
+/**
+*	Summary: Computes and returns the cell locations all threads are responsible for. Called once in main.
+*	@return: Returns a 2d vector of cells where vec[n] == std::vector<Cells> that Thread[n] is responsible to update.
+*/
 std::vector<std::vector<Cell>> getCellLocationsToUpdate();
+
+/**
+ * Summary: Calculates how many Cells each through should be responsible for based on the number of cells in the grid and the number of threads.
+ * @param numOfCells: Number of cells in the grid.
+ * @param threadCount: Number of computation threads that will be working on the grid.
+ * @return: vector<int> where vector[i] = # of cells that computation thread[i] will update
+ */ 
 std::vector<int> getIndexRangesForThreads(int numOfCells, int threadCount);
+
+/**
+ * Summary: prints cell locations to update for debugging purposes.
+ * @param v: Cell locations to update, stored in horizontalBands global variable.
+ * @return: void.
+ */ 
 void printSplitWork(std::vector<std::vector<Cell>> v);
+
+/**
+ * Summary: Updates the state of a cell in the grid.
+ * @param i: row index of cell.
+ * @param j: column index of cell.
+ * @return: void.
+ */  
 void updateCell(int i, int j);
+
+/**
+ * Summary: Inits all locks and threads for the application.
+ * @param args: void* arg.
+ * @return: void*, returns NULL.
+ */ 
 void* InitLocksAndUpdateThreads(void* args);
 
 //==================================================================================
@@ -139,20 +168,19 @@ unsigned int** nextGrid2D;
 //	When this is possible, of course (e.g. makes no sense for a chess program).
 // const unsigned int numRows = 400, numCols = 420;
 
-//added by me
-unsigned int numRows;
-unsigned int numCols;
-unsigned int maxNumThreads;
-std::vector<std::vector<Cell>> horizontalBands;
-bool quit = false;
-unsigned int microSecondsBetweenGenerations = 100000 /* 100,000 */;
-pthread_mutex_t* updateThreadLocks = nullptr;
-pthread_t* updateThreads = nullptr;
-ThreadInfo* updateThreadInfos = nullptr;
-pthread_mutex_t counterLock;
-unsigned int numThreadsFinished = 0;
-pthread_t initThread;
-bool innerQuit = false;
+unsigned int numRows; // number of rows in grid
+unsigned int numCols; // number of columns in grid
+unsigned int maxNumThreads; // number of threads working on the grid
+std::vector<std::vector<Cell>> horizontalBands; // holds cells that each thread is responsible for
+bool quit = false; // stops computation threads computations when set to true
+unsigned int microSecondsBetweenGenerations = 100000; // init value 100,000 micro seconds
+pthread_mutex_t* updateThreadLocks = nullptr; // array of locks, one lock for each update (computation) thread
+pthread_t* updateThreads = nullptr; // array of update threads 
+ThreadInfo* updateThreadInfos = nullptr; // array of threadsInfos for update threads
+pthread_mutex_t counterLock; // lock wrapped around updating of numThreadsFinished to avoid race condition
+unsigned int numThreadsFinished = 0; // number of threads finished so far in a generation
+pthread_t initThread; // thread that inits all locks and threadInfos
+bool innerQuit = false; // stops update (computation) threads after a generation is finished if user ends program.
 
 //	the number of live computation threads (that haven't terminated yet)
 unsigned short numLiveThreads = 0;
@@ -276,6 +304,7 @@ void initializeApplication(void)
 //---------------------------------------------------------------------
 void updateCell(int i, int j)
 {
+	// get new state of cell
 	unsigned int newState = cellNewState(i, j);
 
 	//	In black and white mode, only alive/dead matters
@@ -330,6 +359,8 @@ std::vector<int> getIndexRangesForThreads(int numOfCells, int threadCount)
     // split the cells into as evenly as possible
     else
     {
+		// the first 0 ... upTo threads will be give the value of quotient
+		// the next upTo + 1 ..... will be given quotient + 1 to keep difference between number of cells to lowest as possible
         int upTo = threadCount - (numOfCells % threadCount);
         int quotient = numOfCells/ threadCount;
         for(i = 0; i < threadCount; i++)
@@ -348,8 +379,6 @@ std::vector<int> getIndexRangesForThreads(int numOfCells, int threadCount)
     return processIndexes;
 }
 
-// return vector of vectors
-// where vector[i] = vector of Cells, which is the Cells that Thread[i] should work on
 std::vector<std::vector<Cell>> getCellLocationsToUpdate()
 {
 	std::vector<std::vector<Cell>> outerVector;
@@ -361,14 +390,17 @@ std::vector<std::vector<Cell>> getCellLocationsToUpdate()
 		outerVector.push_back(vec);
 	}
 
+	// get number of cells each threads should work on
 	std::vector<int> splitWork = getIndexRangesForThreads((numRows*numCols) /* num of cells */, maxNumThreads);
 	int currentThread = 0;
 
+	// assign each thread the number of threads it should work on
 	for(unsigned int i = 0; i < numRows; i++)
 	{
 		for(unsigned int j = 0; j < numCols; j++)
 		{
 			// check if currentThread has all it's cells assigned
+			// if no start assigning to the next thread
 			if(splitWork[currentThread] == 0)
 			{
 				currentThread++;
@@ -404,6 +436,7 @@ void* computationThreadFunc(void* arg)
 		
 		// when done
 		// aquire counter lock
+		// update counter
 		pthread_mutex_lock(&counterLock);
 		numThreadsFinished++;
 		pthread_mutex_unlock(&counterLock);
@@ -436,7 +469,7 @@ void* computationThreadFunc(void* arg)
 		else
 		{
 			// not last thread to finish
-			// sleep on own lock
+			// sleep on own lock until unlock by last thread
 			pthread_mutex_lock(&updateThreadLocks[info.threadIndex]);
 		}
 	}
