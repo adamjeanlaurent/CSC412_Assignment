@@ -23,7 +23,10 @@ USER_INPUT=""
 ./tmp/cellv1 $WIDTH $HEIGHT $NUM_THREADS &
 
 while true; do
+	# read user input from command line
 	read USER_INPUT
+
+	# send user input through pipe to CA
 	echo $USER_INPUT > $write_pipe
 
 	# quit script if user typed in "end"
