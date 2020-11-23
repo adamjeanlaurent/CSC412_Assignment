@@ -343,13 +343,13 @@ void WriteToPipe()
 	// prepare message
 	std::string message = "done";
 	const char* message_cstring = message.c_str();
-    char buffer[500];
+	char buffer[500];
 	sprintf(buffer, "%s\n", message_cstring);
 	buffer[strlen(buffer)] = '\0';
 
 	// open pipe
 	int fd = open(pipe.c_str(), O_WRONLY);
-    write(fd, buffer, strlen(buffer) + 1);
+	write(fd, buffer, strlen(buffer) + 1);
 
 	// close pipe
 	close(fd);
