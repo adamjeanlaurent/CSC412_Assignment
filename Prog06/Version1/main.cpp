@@ -58,7 +58,7 @@ using namespace std;
 //==================================================================================
 #endif
 
-// captures the location of a cell
+// captures the location of a cell in a 2D Array
 typedef struct Cell 
 {
 	int i;
@@ -73,6 +73,7 @@ typedef struct ThreadInfo
 	//
 	//	whatever other input or output data may be needed
 	//
+	// vector of cell locations that a thread is responsible to update
 	std::vector<Cell> cellsToUpdate;
 } ThreadInfo;
 
@@ -91,14 +92,57 @@ void* threadFunc(void*);
 void swapGrids(void);
 unsigned int cellNewState(unsigned int i, unsigned int j);
 
-// added by me
+/**
+*	Summary: Computes and returns the cell locations all threads are responsible for. Called once in main.
+*	@return: Returns a 2d vector of cells where vec[n] == std::vector<Cells> that Thread[n] is responsible to update.
+*/
 std::vector<std::vector<Cell>> getCellLocationsToUpdate();
+
+/**
+ * Summary: Calculates how many Cells each through should be responsible for based on the number of cells in the grid and the number of threads.
+ * @param numOfCells: Number of cells in the grid.
+ * @param threadCount: Number of computation threads that will be working on the grid.
+ * @return: vector<int> where vector[i] = # of cells that computation thread[i] will update
+ */ 
 std::vector<int> getIndexRangesForThreads(int numOfCells, int threadCount);
+
+/**
+ * Summary: prints cell locations to update for debugging purposes.
+ * @param v: Cell locations to update, stored in horizontalBands global variable.
+ * @return: void.
+ */ 
 void printSplitWork(std::vector<std::vector<Cell>> v);
+
+/**
+ * Summary: Launches the master computation thread.
+ * @return: void.
+ */ 
 void createMasterComputationThread();
+
+/**
+ * Summary: Thread function run by the master computation thread, launches a generation, and sleeps in a loop until app is exited.
+ * @param args: Void pointer to argument.
+ * @return: void*, returns NULL.
+ */ 
 void* masterComputationThreadFunc(void* args);
+
+/**
+ * Summary: Reads a message from named pipe.
+ * @return string value of message received.
+ */ 
 std::string ReadFromPipe();
+
+/**
+ * Summary: Thread function for the pipe communication thread, reads from pipe in a loop and performs actions.
+ * @param args: Void pointer to argument.
+ * @return: void*, returns NULL.
+ */ 
 void* pipeCommunicationThreadFunc(void *args);
+
+/**
+ * Summary: Launches pipe communication thread.
+ * @return void.
+ */ 
 void createPipeCommunicationThread();
 
 
@@ -147,17 +191,15 @@ unsigned int** nextGrid2D;
 //	When this is possible, of course (e.g. makes no sense for a chess program).
 // const unsigned int numRows = 400, numCols = 420;
 
-unsigned int numRows;
-unsigned int numCols;
-unsigned int maxNumThreads;
-
-//added by me
-std::vector<std::vector<Cell>> horizontalBands;
-pthread_t masterComputationThread;
-bool quit = false;
-int microSecondsBetweenGenerations = 100000; // init value 100,000
-pthread_mutex_t userControlsLock;
-bool stopFromBash = false;
+unsigned int numRows; // number of rows in grid
+unsigned int numCols; // number of columns in grid
+unsigned int maxNumThreads; // number of threads working on the grid
+std::vector<std::vector<Cell>> horizontalBands; // holds cells that each thread is responsible for
+pthread_t masterComputationThread; // master computation thread
+bool quit = false; // stops computation threads computations when set to true
+int microSecondsBetweenGenerations = 100000; // init value 100,000 micro seconds
+pthread_mutex_t userControlsLock; // locks global variable set by keyboard controls and pipe to avoid race condition
+bool stopFromBash = false; // stops pipe communication thread when set
 
 //	the number of live computation threads (that haven't terminated yet)
 unsigned short numLiveThreads = 0;
@@ -207,6 +249,7 @@ int main(int argc, const char* argv[])
 	
 	// init user controls lock
 	pthread_mutex_init(&userControlsLock, NULL);
+
 	//	This takes care of initializing glut and the GUI.
 	//	You shouldn’t have to touch this
 	initializeFrontEnd(argc, argv, displayGridPane, displayStatePane);
@@ -214,7 +257,7 @@ int main(int argc, const char* argv[])
 	//	Now we can do application-level initialization
 	initializeApplication();
 
-	// create pipe communication thread
+	// run pipe communication thread
 	createPipeCommunicationThread();
 
 	// run master computation thread
@@ -287,16 +330,25 @@ void initializeApplication(void)
 //	You will need to implement/modify the two functions below
 //---------------------------------------------------------------------
 
-
 std::string ReadFromPipe()
 {
     std::string pipe = "/tmp/bash_to_c";
+
     char buffer[500];
+
+	//open pipe
     int fd = open(pipe.c_str(), O_RDONLY);
+
+	// read message from pipe
     read(fd, buffer, 500);
+
+	// remove \n and add NULL character
     buffer[strcspn(buffer, "\n")] = 0;
     buffer[strlen(buffer)] = '\0';
+
+	// close pipe
     close(fd);
+
     return std::string(buffer);
 }
 
@@ -305,18 +357,19 @@ void* pipeCommunicationThreadFunc(void *args)
 	bool continueReadingFromPipe = true;
 	while(continueReadingFromPipe)
 	{
-		// read from pipe
+		// read message from pipe
 		std::string message = ReadFromPipe();
 
-		
+		// ignore empty message 
 		if(message.empty()) 
 		{
 			continue;
 		} 
 
-		// std::cout << "message: " << message << std::endl;
-
+		// lock updating of global variables to avoid race condition with keyboard controls
 		pthread_mutex_lock(&userControlsLock);
+
+		// decode message and update appropriate variable
 
 		if(message == "rule 1")
 		{
@@ -358,6 +411,8 @@ void* pipeCommunicationThreadFunc(void *args)
 			stopFromBash = true;
 			continueReadingFromPipe = false;
 		}
+
+		// unclock user controls lock
 		pthread_mutex_unlock(&userControlsLock);
 	}
 	return NULL;
@@ -376,9 +431,11 @@ void createMasterComputationThread()
 
 void* masterComputationThreadFunc(void* args)
 {
-	while(quit == false)
+	while(!quit)
 	{
+		// launch new generation of computation threads
 		oneGeneration();
+		// sleep for a bit
 		usleep(microSecondsBetweenGenerations);
 	}
 	return NULL;
@@ -417,6 +474,8 @@ std::vector<int> getIndexRangesForThreads(int numOfCells, int threadCount)
     // split the cells into as evenly as possible
     else
     {
+		// the first 0 ... upTo threads will be give the value of quotient
+		// the next upTo + 1 ..... will be given quotient + 1 to keep difference between number of cells to lowest as possible
         int upTo = threadCount - (numOfCells % threadCount);
         int quotient = numOfCells/ threadCount;
         for(i = 0; i < threadCount; i++)
@@ -435,27 +494,28 @@ std::vector<int> getIndexRangesForThreads(int numOfCells, int threadCount)
     return processIndexes;
 }
 
-// return vector of vectors
-// where vector[i] = vector of Cells, which is the Cells that Thread[i] should work on
 std::vector<std::vector<Cell>> getCellLocationsToUpdate()
 {
 	std::vector<std::vector<Cell>> outerVector;
 
-	// create thread vectors
+	// create thread vectors of Cell
 	for(unsigned int k = 0; k < maxNumThreads; k++)
 	{
 		std::vector<Cell> vec;
 		outerVector.push_back(vec);
 	}
 
+	// get number of cells each threads should work on
 	std::vector<int> splitWork = getIndexRangesForThreads((numRows*numCols) /* num of cells */, maxNumThreads);
 	int currentThread = 0;
-
+	
+	// assign each thread the number of threads it should work on
 	for(unsigned int i = 0; i < numRows; i++)
 	{
 		for(unsigned int j = 0; j < numCols; j++)
 		{
 			// check if currentThread has all it's cells assigned
+			// if no start assigning to the new thread
 			if(splitWork[currentThread] == 0)
 			{
 				currentThread++;
@@ -478,11 +538,13 @@ void* threadFunc(void* arg)
 {
 	ThreadInfo info = *(ThreadInfo*)arg;
 
+	// loop through cells this computation thread is responsible for
 	for(Cell cell : info.cellsToUpdate)
 	{
 		int i = cell.i;
 		int j = cell.j;
 
+		// update state of cell
 		unsigned int newState = cellNewState(i, j);
 	
 		//	In black and white mode, only alive/dead matters
@@ -504,7 +566,6 @@ void* threadFunc(void* arg)
 		}	
 	}	
 	
-	//usleep(5000); idk if this is needed, i don't think so
 	return NULL;
 }
 
@@ -526,7 +587,6 @@ void oneGeneration(void)
 	for(unsigned int i = 0; i < maxNumThreads; i++)
 	{
 		pthread_create(&updateThreads[i], NULL, threadFunc, &updateThreadInfos[i]);
-		// check for errors here >:(
 	}
 
 	// wait for threads to end
@@ -534,7 +594,7 @@ void oneGeneration(void)
 	{
 		pthread_join(updateThreads[j], NULL);
 	}
-
+	
 	delete[] updateThreads;
 	delete[] updateThreadInfos;
 

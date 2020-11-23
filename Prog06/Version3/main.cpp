@@ -54,7 +54,7 @@ using namespace std;
 //==================================================================================
 #endif
 
-// captures the location of a cell
+// captures the location of a cell in a 2d Array
 typedef struct Cell 
 {
 	int i;

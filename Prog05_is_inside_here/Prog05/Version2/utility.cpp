@@ -129,7 +129,6 @@ std::string Utility::CombinePathWithFile(std::string path, std::string filename)
 {
     int len = path.length() - 1;
     bool hasSlash;
-
     if(path[len] == '/')
         hasSlash = true;
     else
