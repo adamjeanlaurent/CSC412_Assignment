@@ -426,9 +426,7 @@ void* pipeCommunicationThreadFunc(void *args)
 		}
 		else if(message == "speedup")
 		{
-			if(microSecondsBetweenGenerations == 100000)
-				break; // cap at 0.1 second for slowest speed
-			else
+			if(microSecondsBetweenGenerations != 100000) // cap at 100000 for slowest speed
 				microSecondsBetweenGenerations -= 100000 /* 100,000 */;
 		}
 		else if(message == "end")

@@ -25,7 +25,7 @@ fi
 USER_INPUT=""
 
 # launch cellular automation process version 1
-# ./tmp/cellv1 $WIDTH $HEIGHT $NUM_THREADS &
+./tmp/cellv1 $WIDTH $HEIGHT $NUM_THREADS &
 
 while true; do
 	echo "-------------------------------" 
